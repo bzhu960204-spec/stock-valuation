@@ -2,11 +2,13 @@
 A股估值数据拉取模块 (cn_valuation_fetcher.py)
 
 数据源 (直接调用 REST API，无分页，无阻塞):
-  A. 季度利润率  — 东方财富 RPT_DMSK_FN_INCOME          (~2s)
-  B. ROIC 历史   — 东方财富 RPT_F10_FINANCE_MAINFINADATA (~2s)
-  C. PE TTM      — 百度股市通 gushitong.baidu.com        (~7s)
-  D. PS TTM      — 由 PE × (年度净利润/年度营收) 推算
-  E. EV/FCF, Fwd PE, Fwd PS — 暂无数据，可手动录入
+  A. 季度利润率  — 东方财富 RPT_DMSK_FN_INCOME                          (~2s)
+  B. ROIC 历史   — 东方财富 RPT_F10_FINANCE_MAINFINADATA               (~2s)
+  C. Fwd PE/PS   — 东方财富 F10盈利预测 ProfitForecast/PageAjax         (~1s)
+                   取分析师一致预期最近预测年度；Fwd PS = Fwd PE × 预期净利率
+  D. PE TTM      — 百度股市通 gushitong.baidu.com                      (~7s)
+  E. PS TTM      — 由 PE × (年度净利润/年度营收) 推算
+  F. EV/FCF      — 暂无数据，可手动录入
 
 支持代码格式: 600519 / 600519.SH / 000001.SZ / SH:600519 / SH600519
 
@@ -17,6 +19,7 @@ A股估值数据拉取模块 (cn_valuation_fetcher.py)
 
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
 import requests
@@ -35,9 +38,10 @@ _HEADERS = {
     ),
     "Referer": "https://www.eastmoney.com/",
 }
-_EM_V1  = "https://datacenter.eastmoney.com/securities/api/data/v1/get"
-_EM_GET = "https://datacenter.eastmoney.com/securities/api/data/get"
-_BAIDU  = "https://gushitong.baidu.com/opendata"
+_EM_V1   = "https://datacenter.eastmoney.com/securities/api/data/v1/get"
+_EM_GET  = "https://datacenter.eastmoney.com/securities/api/data/get"
+_EM_F10  = "https://emweb.securities.eastmoney.com/PC_HSF10/ProfitForecast/PageAjax"
+_BAIDU   = "https://gushitong.baidu.com/opendata"
 
 
 # ── Ticker 格式识别与规范化 ───────────────────────────────────────────────────
@@ -281,6 +285,61 @@ def _fetch_roic_em(secucode):
     return out
 
 
+# ── eastmoney: 盈利预测 (Fwd PE / Fwd PS) ────────────────────────────────────
+#
+# 接口: emweb.securities.eastmoney.com/PC_HSF10/ProfitForecast/PageAjax
+# 响应中 yctj_chart[] 含: YEAR / YEAR_MARK(A|E) / PE / PARENT_NETPROFIT / TOTAL_OPERATE_INCOME
+#
+# 按当前财季动态混合预测年度（近似 NTM 逻辑）:
+#   Q1       → 100% 当年预测 E_Y0
+#   Q2 / Q3  → 50% 当年 E_Y0 + 50% 次年 E_Y1
+#   Q4       → 100% 次年预测 E_Y1
+
+def _fetch_fwd_estimates_em(code6, exch):
+    """
+    数据源: 东方财富 F10 盈利预测 PageAjax (~1s)
+    返回 (fwd_pe, fwd_ps)，失败时均为 None
+    """
+    try:
+        code_param = f"{exch}{code6}"          # e.g. "SH600519" / "SZ000001"
+        r = requests.get(
+            _EM_F10,
+            params={"code": code_param},
+            headers={**_HEADERS, "Referer": "https://emweb.securities.eastmoney.com/"},
+            timeout=_TIMEOUT,
+        )
+        r.raise_for_status()
+        chart = r.json().get("yctj_chart") or []
+        estimates = [c for c in chart if c.get("YEAR_MARK") == "E"]
+        if not estimates:
+            return None, None
+
+        # 当前财季 (1-4)
+        quarter = (date.today().month - 1) // 3 + 1
+
+        def _pe_ps(est):
+            pe  = _f(est.get("PE"))
+            net = _f(est.get("PARENT_NETPROFIT"))
+            rev = _f(est.get("TOTAL_OPERATE_INCOME"))
+            nm  = _ratio(net, rev)
+            ps  = round(pe * nm, 2) if pe is not None and nm is not None else None
+            return pe, ps
+
+        # 只有一个预测年度时降级到单年
+        if len(estimates) == 1 or quarter == 1:
+            return _pe_ps(estimates[0])
+        elif quarter == 4:
+            return _pe_ps(estimates[1])
+        else:  # Q2 / Q3: 各取50%平均
+            pe0, ps0 = _pe_ps(estimates[0])
+            pe1, ps1 = _pe_ps(estimates[1])
+            fwd_pe = round((pe0 + pe1) / 2, 2) if pe0 is not None and pe1 is not None else (pe0 or pe1)
+            fwd_ps = round((ps0 + ps1) / 2, 2) if ps0 is not None and ps1 is not None else (ps0 or ps1)
+            return fwd_pe, fwd_ps
+    except Exception:
+        return None, None
+
+
 # ── Baidu: PE TTM ─────────────────────────────────────────────────────────────
 #
 # 可用 indicator: "市盈率(TTM)", "市盈率(静)", "市净率", "总市值", "市现率"
@@ -316,15 +375,17 @@ def build_valuation_cn(ticker: str) -> dict:
     获取单只A股的完整估值数据。
     返回字段与 build_valuation() 完全一致，兼容前端与缓存格式。
 
-    耗时参考 (每只股票约 11s):
+    耗时参考 (每只股票约 12s):
       季度利润率  RPT_DMSK_FN_INCOME          ~2s
       ROIC历史    RPT_F10_FINANCE_MAINFINADATA ~2s
+      Fwd PE/PS   EM ProfitForecast PageAjax   ~1s
       PE TTM      Baidu gushitong              ~7s
     """
     if CN_DATA_SOURCE != "eastmoney":
         raise NotImplementedError(f"数据源 '{CN_DATA_SOURCE}' 尚未实现")
 
     code, secucode = _normalize(ticker)
+    exch = secucode.split(".")[1]          # "SH" / "SZ" / "BJ"
     display_ticker = ticker.strip().upper()
 
     margins = _fetch_quarterly_margins_em(secucode)
@@ -333,7 +394,12 @@ def build_valuation_cn(ticker: str) -> dict:
     roic_data = _fetch_roic_em(secucode)
     time.sleep(0.3)
 
-    pe = _fetch_pe_baidu(code)
+    # PageAjax (~1s) 和 Baidu PE (~7-15s) 并发执行
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        f_fwd = pool.submit(_fetch_fwd_estimates_em, code, exch)
+        f_pe  = pool.submit(_fetch_pe_baidu, code)
+        fwd_pe, fwd_ps = f_fwd.result()
+        pe             = f_pe.result()
 
     # PS = PE × (annual net profit / annual revenue)  [same fiscal year consistency]
     ann_rev = roic_data.pop("_rev", None)
@@ -366,9 +432,9 @@ def build_valuation_cn(ticker: str) -> dict:
         # ── 估值倍数 ──
         "fcfMultiple":   None,   # EV/FCF 暂无，可手动录入
         "peRatio":       pe,
-        "fwdPe":         None,   # 前瞻数据暂无，可手动录入
+        "fwdPe":         round(fwd_pe, 2) if fwd_pe is not None else None,
         "psRatio":       ps,
-        "fwdPs":         None,   # 前瞻数据暂无，可手动录入
+        "fwdPs":         fwd_ps,
         # ── ROIC ──
         "roicCurrent":   roic_data["roicCurrent"],
         "ttmRoicY1":     roic_data["ttmRoicY1"],

@@ -41,16 +41,20 @@
 |------|--------|-----|------|
 | 季度毛利率 / 营业利润率 / 净利率 (Q1-Q4) | 东方财富 | `datacenter.eastmoney.com` `RPT_DMSK_FN_INCOME` | ~2s |
 | ROIC 历史 (近4年年报) | 东方财富 | `datacenter.eastmoney.com` `RPT_F10_FINANCE_MAINFINADATA` | ~2s |
+| **Fwd PE / Fwd PS** | **东方财富 F10盈利预测** | **`emweb.securities.eastmoney.com` `ProfitForecast/PageAjax`** | **~1s** |
 | PE TTM | 百度股市通 | `gushitong.baidu.com/opendata` indicator=`市盈率(TTM)` | ~7s |
 | PS TTM | 推算 | `PE × (年度净利润 / 年度营收)` | 0s |
-| EV/FCF / Fwd PE / Fwd PS | — | 暂无免费实时数据源，留空可手动录入 | — |
+| EV/FCF | — | 暂无免费实时数据源，留空可手动录入 | — |
 
-> **备注**: `RPT_DMSK_FN_INCOME` 返回的是累计 YTD 数据，模块内部通过差值还原为单季度数据。
-> ROIC 字段来自东方财富财务分析页，单位为 %（模块内已自动除以 100）。
+> **备注**:
+> - `ProfitForecast/PageAjax` 返回分析师一致预期 (`yctj_chart`)，取 `YEAR_MARK="E"` 的最近预测年度；Fwd PE 直接读取 `PE` 字段，Fwd PS = Fwd PE × (预期净利润 / 预期营收)。
+> - Fwd PE/PS 与 Baidu PE 并发请求，不增加总耗时。
+> - `RPT_DMSK_FN_INCOME` 返回累计 YTD 数据，模块内部通过差值还原为单季度。
+> - ROIC 字段来自东方财富财务分析页，单位为 %（模块内已自动除以 100）。
 
 支持A股代码格式：`600519` / `600519.SH` / `000001.SZ` / `SH:601318`。
 
-每只股票约需 **10-12 秒**（2次东方财富请求 + 1次百度请求）。
+每只股票约需 **9-12 秒**（2次东方财富请求串行 + 盈利预测/Baidu PE 并发）。
 
 ---
 
