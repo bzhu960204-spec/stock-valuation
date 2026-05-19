@@ -10,8 +10,12 @@
     <div class="container">
         <header>
             <h1>📊 Stock Valuation</h1>
-            <p class="subtitle">美股估值数据面板</p>
         </header>
+
+        <div class="market-tabs">
+            <button class="tab-btn active" id="tab-global" onclick="switchMarket('global')">🌏 全球 / 美股</button>
+            <button class="tab-btn" id="tab-cn" onclick="switchMarket('cn')">🇨🇳 A股</button>
+        </div>
 
         <section class="input-section">
             <div class="input-group">
@@ -22,7 +26,7 @@
         </section>
 
         <section class="data-section">
-            <div id="loading" class="loading hidden">⏳ 正在拉取数据，每只股票约需5秒...</div>
+            <div id="loading" class="loading hidden">⏳ 正在拉取数据...</div>
             <div id="tableContainer"></div>
         </section>
     </div>

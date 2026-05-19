@@ -1,15 +1,40 @@
 // Stock Valuation Frontend
 
-document.addEventListener("DOMContentLoaded", loadData);
+// ── Market state ──────────────────────────────────────────────────────────────
+let currentMarket = "global";  // "global" | "cn"
 
-// Enter key triggers fetch
-document.getElementById("tickerInput").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") fetchStocks();
+const PLACEHOLDERS = {
+    global: "输入股票代码，逗号分隔 (如: AAPL, MSFT, STO:SIVE)",
+    cn:     "输入A股代码，逗号分隔 (如: 600519, 000001, 688599)",
+};
+
+function apiUrl(path) {
+    return currentMarket === "cn" ? `/api/cn${path}` : `/api${path}`;
+}
+
+function switchMarket(market) {
+    if (market === currentMarket) return;
+    currentMarket = market;
+
+    document.getElementById("tab-global").classList.toggle("active", market === "global");
+    document.getElementById("tab-cn").classList.toggle("active", market === "cn");
+    document.getElementById("tickerInput").placeholder = PLACEHOLDERS[market];
+
+    showStatus("", "");
+    loadData();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("tickerInput").placeholder = PLACEHOLDERS[currentMarket];
+    document.getElementById("tickerInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") fetchStocks();
+    });
+    loadData();
 });
 
 async function loadData() {
     try {
-        const resp = await fetch("/api/valuations");
+        const resp = await fetch(apiUrl("/valuations"));
         const data = await resp.json();
         renderTable(data);
     } catch (e) {
@@ -71,7 +96,7 @@ function startEdit(cell) {
         }
 
         try {
-            const resp = await fetch("/api/update", {
+            const resp = await fetch(apiUrl("/update"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ticker, field, value }),
@@ -124,10 +149,13 @@ async function fetchStocks() {
     btn.disabled = true;
     btn.textContent = "拉取中...";
     loading.classList.remove("hidden");
+    loading.textContent = currentMarket === "cn"
+        ? `⏳ 正在拉取A股数据，每只股票约需12秒...`
+        : `⏳ 正在拉取数据，每只股票约需5-8秒...`;
     showStatus(`正在拉取 ${tickers.join(", ")} ...`, "");
 
     try {
-        const resp = await fetch("/api/fetch", {
+        const resp = await fetch(apiUrl("/fetch"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tickers }),
@@ -160,7 +188,7 @@ async function deleteStock(ticker) {
     if (!confirm(`确定删除 ${ticker} 的数据？`)) return;
 
     try {
-        await fetch("/api/delete", {
+        await fetch(apiUrl("/delete"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ticker }),
