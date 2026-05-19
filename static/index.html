@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Valuation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Stock Valuation</h1>
+            <p class="subtitle">美股估值数据面板</p>
+        </header>
+
+        <section class="input-section">
+            <div class="input-group">
+                <input type="text" id="tickerInput" placeholder="输入股票代码，逗号分隔 (如: AAPL, MSFT, NVDA)" />
+                <button id="fetchBtn" onclick="fetchStocks()">拉取数据</button>
+            </div>
+            <div id="statusMsg" class="status-msg"></div>
+        </section>
+
+        <section class="data-section">
+            <div id="loading" class="loading hidden">⏳ 正在拉取数据，每只股票约需5秒...</div>
+            <div id="tableContainer"></div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
