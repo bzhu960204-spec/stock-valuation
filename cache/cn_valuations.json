@@ -40,5 +40,47 @@
       "2025"
     ],
     "fetchDate": "2026-05-19"
+  },
+  {
+    "ticker": "600519",
+    "grossMargin": null,
+    "grossMarginQ1": 0.9062791602675692,
+    "grossMarginQ2": 0.9144317981473239,
+    "grossMarginQ3": 0.9098838381212658,
+    "grossMarginQ4": 0.8990779656951022,
+    "quarterLabels": [
+      "2025-06-30",
+      "2025-09-30",
+      "2025-12-31",
+      "2026-03-31"
+    ],
+    "opMargin": null,
+    "opMarginQ1": 0.6489829176050289,
+    "opMarginQ2": 0.6712041169274056,
+    "opMarginQ3": 0.6152875316924424,
+    "opMarginQ4": 0.6861976273233148,
+    "netMargin": null,
+    "netMarginQ1": 0.4679783622707875,
+    "netMarginQ2": 0.48288678845484795,
+    "netMarginQ3": 0.42996838464959214,
+    "netMarginQ4": 0.4980084551002002,
+    "fcfMultiple": 21.33,
+    "fwdFcfMultiple": 23.68,
+    "peRatio": 19.99,
+    "fwdPe": 18.67,
+    "psRatio": 9.56,
+    "fwdPs": 8.96,
+    "roicCurrent": 0.31424532666193,
+    "ttmRoicY1": 0.29225370837358,
+    "ttmRoicY2": 0.33280517298059004,
+    "ttmRoicY3": 0.35039932454816997,
+    "ttmRoicY4": 0.31424532666193,
+    "roicLabels": [
+      "2022",
+      "2023",
+      "2024",
+      "2025"
+    ],
+    "fetchDate": "2026-05-19"
   }
 ]

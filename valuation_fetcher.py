@@ -241,6 +241,7 @@ def fetch_roic_history(ticker: str) -> dict:
     """从 ratios 页面获取 PE/Fwd PE/PS 及 ROIC 历史"""
     result = {
         "peRatio": None,
+        "pegRatio": None,
         "fwdPe": None,
         "psRatio": None,
         "roicCurrent": None,
@@ -278,9 +279,10 @@ def fetch_roic_history(ticker: str) -> dict:
         row = data.get(label, [])
         return _parse_number(row[0]) if row else None
 
-    result["peRatio"] = _cur("PE Ratio")
-    result["fwdPe"]   = _cur("Forward PE")
-    result["psRatio"] = _cur("PS Ratio")
+    result["peRatio"]  = _cur("PE Ratio")
+    result["pegRatio"] = _cur("PEG Ratio")
+    result["fwdPe"]    = _cur("Forward PE")
+    result["psRatio"]  = _cur("PS Ratio")
 
     # ROIC row (label contains "ROIC")
     roic_row = next((v for k, v in data.items() if "ROIC" in k), [])
@@ -332,6 +334,7 @@ def build_valuation(ticker: str) -> dict:
         "fcfMultiple": ev_fcf["fcfMultiple"],
         "fwdFcfMultiple": None,
         "peRatio": roic["peRatio"],
+        "pegRatio": roic["pegRatio"],
         "fwdPe": roic["fwdPe"],
         "psRatio": roic["psRatio"],
         "fwdPs": ev_fcf["fwdPs"],

@@ -335,11 +335,12 @@ def _fetch_fwd_estimates_em(code6, exch):
         # PE TTM: 最新实际年度 (YEAR_MARK="A") 的 PE
         actuals = [c for c in chart if c.get("YEAR_MARK") == "A"]
         pe_ttm = _f(actuals[0].get("PE")) if actuals else None
+        cur_net = _f(actuals[0].get("PARENT_NETPROFIT")) if actuals else None
 
         # Fwd PE / PS: 预测年度 (YEAR_MARK="E")
         estimates = [c for c in chart if c.get("YEAR_MARK") == "E"]
         if not estimates:
-            return pe_ttm, None, None
+            return pe_ttm, None, None, None
 
         quarter = (date.today().month - 1) // 3 + 1
 
@@ -351,6 +352,8 @@ def _fetch_fwd_estimates_em(code6, exch):
             ps  = round(pe * nm, 2) if pe is not None and nm is not None else None
             return pe, ps
 
+        fwd_net_y0 = _f(estimates[0].get("PARENT_NETPROFIT"))
+
         if len(estimates) == 1 or quarter == 1:
             fwd_pe, fwd_ps = _pe_ps(estimates[0])
         elif quarter == 4:
@@ -361,9 +364,9 @@ def _fetch_fwd_estimates_em(code6, exch):
             fwd_pe = round((pe0 + pe1) / 2, 2) if pe0 is not None and pe1 is not None else (pe0 or pe1)
             fwd_ps = round((ps0 + ps1) / 2, 2) if ps0 is not None and ps1 is not None else (ps0 or ps1)
 
-        return pe_ttm, fwd_pe, fwd_ps
+        return pe_ttm, fwd_pe, fwd_ps, fwd_net_y0
     except Exception:
-        return None, None, None
+        return None, None, None, None
 
 
 # ── eastmoney: 资产负债表 (现金 / 总资产) ─────────────────────────────────────
@@ -451,7 +454,7 @@ def build_valuation_cn(ticker: str) -> dict:
         f_fwd     = pool.submit(_fetch_fwd_estimates_em, code, exch)
         f_balance = pool.submit(_fetch_balance_em, secucode)
         f_price   = pool.submit(_fetch_price_sina, code, exch)
-        pe_lfy, fwd_pe, fwd_ps = f_fwd.result()   # LFY PE (fallback)
+        pe_lfy, fwd_pe, fwd_ps, fwd_net_y0 = f_fwd.result()   # LFY PE (fallback)
         balance                 = f_balance.result()
         price                   = f_price.result()
 
@@ -476,6 +479,14 @@ def build_valuation_cn(ticker: str) -> dict:
         nm = _ratio(ann_net, ann_rev)
         if nm is not None:
             ps = round(pe * nm, 2)
+
+    # PEG = Fwd PE ÷ 预期 EPS 增长率(%)
+    # EPS 增长率 ≈ (预测年净利润 - 年报实际年净利润) / |年报实际年净利润| × 100
+    peg = None
+    if fwd_pe is not None and fwd_net_y0 is not None and ann_net and ann_net != 0:
+        eps_growth = (fwd_net_y0 - ann_net) / abs(ann_net) * 100
+        if eps_growth > 0:
+            peg = round(fwd_pe / eps_growth, 2)
 
     # EV/FCF 和 Fwd EV/FCF 计算
     # EV = 总市值 + 有息负债 - 货币资金
@@ -529,6 +540,7 @@ def build_valuation_cn(ticker: str) -> dict:
         "fcfMultiple":    ev_fcf,     # EV/FCF (有息负债法) 或 P/FCF 近似
         "fwdFcfMultiple": fwd_ev_fcf, # Fwd EV/FCF (基于 FCFF_FORWARD 分析师预测)
         "peRatio":        pe,
+        "pegRatio":       peg,
         "fwdPe":         round(fwd_pe, 2) if fwd_pe is not None else None,
         "psRatio":       ps,
         "fwdPs":         fwd_ps,
