@@ -150,7 +150,7 @@ async function fetchStocks() {
     btn.textContent = "拉取中...";
     loading.classList.remove("hidden");
     loading.textContent = currentMarket === "cn"
-        ? `⏳ 正在拉取A股数据，每只股票约需12秒...`
+        ? `⏳ 正在拉取A股数据，每只股票约需5-6秒...`
         : `⏳ 正在拉取数据，每只股票约需5-8秒...`;
     showStatus(`正在拉取 ${tickers.join(", ")} ...`, "");
 
@@ -224,13 +224,14 @@ function renderTable(data) {
             <th rowspan="2" class="col-ticker">Ticker</th>
             <th rowspan="2" class="col-metric-hdr">Margin</th>
             <th colspan="4" class="group-header">Quarterly</th>
-            <th colspan="5" class="group-header">Valuation</th>
+            <th colspan="6" class="group-header">Valuation</th>
             <th colspan="${1 + rDisplay.length}" class="group-header">ROIC</th>
             <th rowspan="2"></th>
         </tr>
         <tr>
             ${qDisplay.map(l => `<th>${l}</th>`).join("")}
             <th>EV/FCF</th>
+            <th>Fwd EV/FCF</th>
             <th>PE</th>
             <th>Fwd PE</th>
             <th>PS</th>
@@ -247,7 +248,8 @@ function renderTable(data) {
             const key = `ttmRoicY${rDisplay.length - i}`;
             return `<td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="${key}" data-type="pct">${fmtPct(row[key])}</td>`;
         }).join("");
-        return `<td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="fcfMultiple" data-type="val">${fmtVal(row.fcfMultiple)}</td>
+        return `<td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="fcfMultiple"    data-type="val">${fmtVal(row.fcfMultiple)}</td>
+                <td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="fwdFcfMultiple" data-type="val">${fmtVal(row.fwdFcfMultiple)}</td>
                 <td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="peRatio"     data-type="val">${fmtVal(row.peRatio)}</td>
                 <td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="fwdPe"       data-type="val">${fmtVal(row.fwdPe)}</td>
                 <td rowspan="3" class="editable-cell" data-ticker="${t}" data-field="psRatio"     data-type="val">${fmtVal(row.psRatio)}</td>

@@ -4,11 +4,18 @@ A股估值数据拉取模块 (cn_valuation_fetcher.py)
 数据源 (直接调用 REST API，无分页，无阻塞):
   A. 季度利润率  — 东方财富 RPT_DMSK_FN_INCOME                          (~2s)
   B. ROIC 历史   — 东方财富 RPT_F10_FINANCE_MAINFINADATA               (~2s)
-  C. Fwd PE/PS   — 东方财富 F10盈利预测 ProfitForecast/PageAjax         (~1s)
-                   取分析师一致预期最近预测年度；Fwd PS = Fwd PE × 预期净利率
-  D. PE TTM      — 百度股市通 gushitong.baidu.com                      (~7s)
-  E. PS TTM      — 由 PE × (年度净利润/年度营收) 推算
-  F. EV/FCF      — 暂无数据，可手动录入
+                   同时获取 FCFF_BACK(TTM自由现金流) 和 INTEREST_DEBT_RATIO
+  C. PE TTM      — 新浪财经 hq.sinajs.cn (实时股价) + 季报TTM净利润 + 年报EPS推算股本  (~0.1s)
+                   TTM EPS = TTM净利润 ÷ 加权股本；PE TTM = 当前股价 ÷ TTM EPS
+                   失败时降级为东方财富PageAjax年报PE
+  D. Fwd PE/PS   — 东方财富 F10盈利预测 ProfitForecast/PageAjax             (~1s)
+                   C/D 同一次请求，三路并发C/D/E
+  E. 资产负债表  — 东方财富 RPT_DMSK_FN_BALANCE                              (~1-2s)
+                   获取货币资金(MONETARYFUNDS) 和 总资产(TOTAL_ASSETS)
+  F. PS TTM      — 由 PE × (年度净利润/年度营收) 推算
+  G. EV/FCF      — EV = PE×净利润(市值) + 有息负债比×总资产 - 货币资金
+                   FCF = FCFF_BACK (东方财富年报自由现金流)
+                   C/D/E 三路并发执行，总耗时约 ~5s
 
 支持代码格式: 600519 / 600519.SH / 000001.SZ / SH:600519 / SH600519
 
@@ -18,7 +25,6 @@ A股估值数据拉取模块 (cn_valuation_fetcher.py)
 """
 
 import re
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 
@@ -41,7 +47,6 @@ _HEADERS = {
 _EM_V1   = "https://datacenter.eastmoney.com/securities/api/data/v1/get"
 _EM_GET  = "https://datacenter.eastmoney.com/securities/api/data/get"
 _EM_F10  = "https://emweb.securities.eastmoney.com/PC_HSF10/ProfitForecast/PageAjax"
-_BAIDU   = "https://gushitong.baidu.com/opendata"
 
 
 # ── Ticker 格式识别与规范化 ───────────────────────────────────────────────────
@@ -201,6 +206,7 @@ def _fetch_quarterly_margins_em(secucode):
         "netMarginQ1":   None, "netMarginQ2":   None,
         "netMarginQ3":   None, "netMarginQ4":   None,
         "quarterLabels": [],
+        "_ttm_net": None,
     }
     try:
         rows = _em_v1(
@@ -228,6 +234,11 @@ def _fetch_quarterly_margins_em(secucode):
         out[f"opMarginQ{q}"]    = _ratio(op, rev)
         out[f"netMarginQ{q}"]   = _ratio(net, rev)
 
+    # TTM 净利润 = 最近 4 个单季度之和
+    nets = [sq.get("PARENT_NETPROFIT") for sq in sq_oldest if sq.get("PARENT_NETPROFIT") is not None]
+    if len(nets) == 4:
+        out["_ttm_net"] = sum(nets)
+
     return out
 
 
@@ -252,6 +263,10 @@ def _fetch_roic_em(secucode):
         "roicLabels": [],
         "_rev": None,
         "_net": None,
+        "_epsjb": None,
+        "_fcff": None,
+        "_fcff_fwd": None,
+        "_int_debt_ratio": None,
     }
     try:
         rows = _em_get(
@@ -273,8 +288,12 @@ def _fetch_roic_em(secucode):
 
     roic_v = _f(annual[0].get("ROIC"))
     out["roicCurrent"] = roic_v / 100.0 if roic_v is not None else None
-    out["_rev"] = _f(annual[0].get("TOTALOPERATEREVE"))
-    out["_net"] = _f(annual[0].get("PARENTNETPROFIT"))
+    out["_rev"]  = _f(annual[0].get("TOTALOPERATEREVE"))
+    out["_net"]  = _f(annual[0].get("PARENTNETPROFIT"))
+    out["_epsjb"] = _f(annual[0].get("EPSJB"))
+    out["_fcff"]          = _f(annual[0].get("FCFF_BACK"))
+    out["_fcff_fwd"]      = _f(annual[0].get("FCFF_FORWARD"))
+    out["_int_debt_ratio"] = _f(annual[0].get("INTEREST_DEBT_RATIO"))
 
     oldest_first = list(reversed(annual))
     out["roicLabels"] = [str(r.get("REPORT_DATE", ""))[:4] for r in oldest_first]
@@ -285,12 +304,13 @@ def _fetch_roic_em(secucode):
     return out
 
 
-# ── eastmoney: 盈利预测 (Fwd PE / Fwd PS) ────────────────────────────────────
+# ── eastmoney: 盈利预测 (PE TTM / Fwd PE / Fwd PS) ──────────────────────────
 #
 # 接口: emweb.securities.eastmoney.com/PC_HSF10/ProfitForecast/PageAjax
 # 响应中 yctj_chart[] 含: YEAR / YEAR_MARK(A|E) / PE / PARENT_NETPROFIT / TOTAL_OPERATE_INCOME
 #
-# 按当前财季动态混合预测年度（近似 NTM 逻辑）:
+# YEAR_MARK="A" (实际年报): PE = 当前股价 ÷ 该年度实际EPS → 等价于 PE TTM（当年全年为最新年报时）
+# YEAR_MARK="E" (分析师预测): 按当前财季动态混合:
 #   Q1       → 100% 当年预测 E_Y0
 #   Q2 / Q3  → 50% 当年 E_Y0 + 50% 次年 E_Y1
 #   Q4       → 100% 次年预测 E_Y1
@@ -298,7 +318,8 @@ def _fetch_roic_em(secucode):
 def _fetch_fwd_estimates_em(code6, exch):
     """
     数据源: 东方财富 F10 盈利预测 PageAjax (~1s)
-    返回 (fwd_pe, fwd_ps)，失败时均为 None
+    返回 (pe_ttm, fwd_pe, fwd_ps)，失败时均为 None
+    pe_ttm 取最新实际年度(A)的 PE（基于当前股价），相当于 PE TTM 近似值
     """
     try:
         code_param = f"{exch}{code6}"          # e.g. "SH600519" / "SZ000001"
@@ -310,11 +331,16 @@ def _fetch_fwd_estimates_em(code6, exch):
         )
         r.raise_for_status()
         chart = r.json().get("yctj_chart") or []
+
+        # PE TTM: 最新实际年度 (YEAR_MARK="A") 的 PE
+        actuals = [c for c in chart if c.get("YEAR_MARK") == "A"]
+        pe_ttm = _f(actuals[0].get("PE")) if actuals else None
+
+        # Fwd PE / PS: 预测年度 (YEAR_MARK="E")
         estimates = [c for c in chart if c.get("YEAR_MARK") == "E"]
         if not estimates:
-            return None, None
+            return pe_ttm, None, None
 
-        # 当前财季 (1-4)
         quarter = (date.today().month - 1) // 3 + 1
 
         def _pe_ps(est):
@@ -325,45 +351,71 @@ def _fetch_fwd_estimates_em(code6, exch):
             ps  = round(pe * nm, 2) if pe is not None and nm is not None else None
             return pe, ps
 
-        # 只有一个预测年度时降级到单年
         if len(estimates) == 1 or quarter == 1:
-            return _pe_ps(estimates[0])
+            fwd_pe, fwd_ps = _pe_ps(estimates[0])
         elif quarter == 4:
-            return _pe_ps(estimates[1])
-        else:  # Q2 / Q3: 各取50%平均
+            fwd_pe, fwd_ps = _pe_ps(estimates[1])
+        else:  # Q2 / Q3
             pe0, ps0 = _pe_ps(estimates[0])
             pe1, ps1 = _pe_ps(estimates[1])
             fwd_pe = round((pe0 + pe1) / 2, 2) if pe0 is not None and pe1 is not None else (pe0 or pe1)
             fwd_ps = round((ps0 + ps1) / 2, 2) if ps0 is not None and ps1 is not None else (ps0 or ps1)
-            return fwd_pe, fwd_ps
+
+        return pe_ttm, fwd_pe, fwd_ps
     except Exception:
-        return None, None
+        return None, None, None
 
 
-# ── Baidu: PE TTM ─────────────────────────────────────────────────────────────
+# ── eastmoney: 资产负债表 (现金 / 总资产) ─────────────────────────────────────
 #
-# 可用 indicator: "市盈率(TTM)", "市盈率(静)", "市净率", "总市值", "市现率"
-# 返回时间序列中最新一个值
+# RPT_DMSK_FN_BALANCE 提供简化资产负债表
+# 用于计算 EV = 总市值 + 有息负债 - 货币资金
+#   MONETARYFUNDS  — 货币资金 (现金及现金等价物)
+#   TOTAL_ASSETS   — 资产总计
+#   SHORT_LOAN     — 短期借款 (部分公司有，贡献于有息负债)
 
-def _fetch_pe_baidu(code6):
+def _fetch_balance_em(secucode):
     """
-    数据源: 百度股市通 gushitong.baidu.com (~7s)
-    返回最新 PE TTM，失败则返回 None（不影响其他字段）
+    数据源: 东方财富 RPT_DMSK_FN_BALANCE (~1-2s)
+    返回最新期末货币资金和总资产，用于 EV 计算
+    """
+    out = {"monetaryfunds": None, "total_assets": None}
+    try:
+        rows = _em_v1(
+            "RPT_DMSK_FN_BALANCE",
+            "SECUCODE,REPORT_DATE,MONETARYFUNDS,TOTAL_ASSETS,SHORT_LOAN",
+            secucode,
+            page_size=1,
+        )
+        if rows:
+            out["monetaryfunds"] = _f(rows[0].get("MONETARYFUNDS"))
+            out["total_assets"]  = _f(rows[0].get("TOTAL_ASSETS"))
+    except Exception:
+        pass
+    return out
+
+
+# ── Sina Finance: 实时股价 ────────────────────────────────────────────────────
+#
+# 接口: hq.sinajs.cn/list=sh600519
+# 响应: var hq_str_sh600519="贵州茅台,open,prev_close,current,high,low,...";
+# fields[3] = 当前价格
+
+def _fetch_price_sina(code6, exch):
+    """
+    数据源: 新浪财经实时行情 (~0.1s)
+    返回当前股价，失败则返回 None
     """
     try:
-        params = {
-            "openapi": "1", "dspName": "iphone", "tn": "tangram",
-            "client": "app", "query": "市盈率(TTM)", "code": code6,
-            "word": "", "resource_id": "51171", "market": "ab",
-            "tag": "市盈率(TTM)", "chart_select": "近一年",
-            "industry_select": "", "skip_industry": "1", "finClientType": "pc",
-        }
-        r = requests.get(_BAIDU, params=params, headers=_HEADERS, timeout=_TIMEOUT)
-        body = (
-            r.json()["Result"][0]["DisplayData"]["resultData"]
-            ["tplData"]["result"]["chartInfo"][0]["body"]
+        prefix = "sh" if exch == "SH" else ("sz" if exch == "SZ" else "bj")
+        r = requests.get(
+            f"https://hq.sinajs.cn/list={prefix}{code6}",
+            headers={**_HEADERS, "Referer": "https://finance.sina.com.cn/"},
+            timeout=_TIMEOUT,
         )
-        return _f(body[-1][1]) if body else None
+        data_str = r.text.split('"')[1]
+        fields = data_str.split(",")
+        return _f(fields[3]) if len(fields) > 3 else None
     except Exception:
         return None
 
@@ -375,11 +427,14 @@ def build_valuation_cn(ticker: str) -> dict:
     获取单只A股的完整估值数据。
     返回字段与 build_valuation() 完全一致，兼容前端与缓存格式。
 
-    耗时参考 (每只股票约 12s):
-      季度利润率  RPT_DMSK_FN_INCOME          ~2s
-      ROIC历史    RPT_F10_FINANCE_MAINFINADATA ~2s
-      Fwd PE/PS   EM ProfitForecast PageAjax   ~1s
-      PE TTM      Baidu gushitong              ~7s
+    耗时参考 (每只股票约 5-6s):
+      季度利润率  RPT_DMSK_FN_INCOME          ~2s  (含TTM净利润)
+      ROIC历史    RPT_F10_FINANCE_MAINFINADATA ~2s  (含EPSJB/FCFF_BACK)
+      ── 以下三路并发 ──
+      PE TTM + Fwd PE/PS  EM ProfitForecast PageAjax  ~1s
+      资产负债表          RPT_DMSK_FN_BALANCE           ~1-2s
+      实时股价            新浪财经 hq.sinajs.cn          ~0.1s
+    PE TTM = 当前股价 ÷ TTM EPS; 若新浪失败则降级为年报PE
     """
     if CN_DATA_SOURCE != "eastmoney":
         raise NotImplementedError(f"数据源 '{CN_DATA_SOURCE}' 尚未实现")
@@ -389,26 +444,67 @@ def build_valuation_cn(ticker: str) -> dict:
     display_ticker = ticker.strip().upper()
 
     margins = _fetch_quarterly_margins_em(secucode)
-    time.sleep(0.3)
-
     roic_data = _fetch_roic_em(secucode)
-    time.sleep(0.3)
 
-    # PageAjax (~1s) 和 Baidu PE (~7-15s) 并发执行
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        f_fwd = pool.submit(_fetch_fwd_estimates_em, code, exch)
-        f_pe  = pool.submit(_fetch_pe_baidu, code)
-        fwd_pe, fwd_ps = f_fwd.result()
-        pe             = f_pe.result()
+    # PageAjax (~1s), 资产负债表 (~1-2s), 新浪实时股价 (~0.1s) 并发执行
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        f_fwd     = pool.submit(_fetch_fwd_estimates_em, code, exch)
+        f_balance = pool.submit(_fetch_balance_em, secucode)
+        f_price   = pool.submit(_fetch_price_sina, code, exch)
+        pe_lfy, fwd_pe, fwd_ps = f_fwd.result()   # LFY PE (fallback)
+        balance                 = f_balance.result()
+        price                   = f_price.result()
 
-    # PS = PE × (annual net profit / annual revenue)  [same fiscal year consistency]
+    # PS = PE × (annual net profit / annual revenue)
     ann_rev = roic_data.pop("_rev", None)
     ann_net = roic_data.pop("_net", None)
+    ann_eps = roic_data.pop("_epsjb", None)
+    ttm_net = margins.pop("_ttm_net", None)
+
+    # TTM PE: 当前价格 ÷ TTM EPS
+    # total_shares ≈ 年报归母净利润 ÷ 年报每股收益 (加权平均股数)
+    pe = pe_lfy  # default: last-fiscal-year PE from PageAjax
+    if price and ann_net and ann_eps and ann_eps != 0 and ttm_net:
+        total_shares = ann_net / ann_eps
+        if total_shares > 0:
+            ttm_eps = ttm_net / total_shares
+            if ttm_eps > 0:
+                pe = round(price / ttm_eps, 2)
+
     ps = None
     if pe is not None and ann_rev and ann_net:
         nm = _ratio(ann_net, ann_rev)
         if nm is not None:
             ps = round(pe * nm, 2)
+
+    # EV/FCF 和 Fwd EV/FCF 计算
+    # EV = 总市值 + 有息负债 - 货币资金
+    # 总市值 ≈ PE(TTM) × 归母净利润(最新年报)
+    # 有息负债 ≈ INTEREST_DEBT_RATIO% × 总资产
+    fcff          = roic_data.pop("_fcff", None)
+    fcff_fwd      = roic_data.pop("_fcff_fwd", None)
+    int_debt_ratio = roic_data.pop("_int_debt_ratio", None)
+    ev_fcf = None
+    fwd_ev_fcf = None
+    if pe is not None and ann_net:
+        # 总市值: 优先用实时股价×股本，其次用 PE×净利润
+        if price and ann_net and ann_eps and ann_eps != 0:
+            total_shares = ann_net / ann_eps
+            market_cap = price * total_shares
+        else:
+            market_cap = pe * ann_net
+        total_assets = balance.get("total_assets")
+        cash         = balance.get("monetaryfunds") or 0
+        if int_debt_ratio is not None and total_assets:
+            interest_debt = int_debt_ratio / 100.0 * total_assets
+            net_debt  = interest_debt - cash
+            ev = market_cap + net_debt
+        else:
+            ev = market_cap  # fallback: P/FCF approximation
+        if fcff and fcff != 0:
+            ev_fcf = round(ev / fcff, 2)
+        if fcff_fwd and fcff_fwd != 0:
+            fwd_ev_fcf = round(ev / fcff_fwd, 2)
 
     return {
         "ticker": display_ticker,
@@ -430,8 +526,9 @@ def build_valuation_cn(ticker: str) -> dict:
         "netMarginQ3":   margins["netMarginQ3"],
         "netMarginQ4":   margins["netMarginQ4"],
         # ── 估值倍数 ──
-        "fcfMultiple":   None,   # EV/FCF 暂无，可手动录入
-        "peRatio":       pe,
+        "fcfMultiple":    ev_fcf,     # EV/FCF (有息负债法) 或 P/FCF 近似
+        "fwdFcfMultiple": fwd_ev_fcf, # Fwd EV/FCF (基于 FCFF_FORWARD 分析师预测)
+        "peRatio":        pe,
         "fwdPe":         round(fwd_pe, 2) if fwd_pe is not None else None,
         "psRatio":       ps,
         "fwdPs":         fwd_ps,

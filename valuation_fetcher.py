@@ -330,6 +330,7 @@ def build_valuation(ticker: str) -> dict:
         "netMarginQ3": margins["netMarginQ3"],
         "netMarginQ4": margins["netMarginQ4"],
         "fcfMultiple": ev_fcf["fcfMultiple"],
+        "fwdFcfMultiple": None,
         "peRatio": roic["peRatio"],
         "fwdPe": roic["fwdPe"],
         "psRatio": roic["psRatio"],
