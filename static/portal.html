@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tools</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f1419;
+            color: #e7e9ea;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .portal {
+            text-align: center;
+        }
+        .portal h1 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+        .portal p {
+            color: #71767b;
+            margin-bottom: 48px;
+            font-size: 1rem;
+        }
+        .cards {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 280px;
+            text-decoration: none;
+            color: #e7e9ea;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #1d9bf0;
+            box-shadow: 0 8px 32px rgba(29, 155, 240, 0.15);
+        }
+        .card .icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .card p {
+            color: #71767b;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal">
+        <h1>📊 Stock Tools</h1>
+        <p>选择一个模块开始</p>
+        <div class="cards">
+            <a href="/valuation" class="card">
+                <div class="icon">💰</div>
+                <h2>估值模块</h2>
+                <p>查看股票估值指标：毛利率、净利率、EV/FCF、ROIC 等</p>
+            </a>
+            <a href="/growth" class="card">
+                <div class="icon">📈</div>
+                <h2>增速模块</h2>
+                <p>查看公司近五年收入及同比增长率</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

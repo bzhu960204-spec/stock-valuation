@@ -11,12 +11,14 @@ from flask import Flask, jsonify, request, send_from_directory
 
 from valuation_fetcher import fetch_multiple
 from cn_valuation_fetcher import fetch_multiple_cn
+from growth_fetcher import fetch_multiple_growth
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
 # ── 缓存文件路径 ──────────────────────────────────────────────────────────────
-CACHE_FILE    = Path(__file__).parent / "cache" / "valuations.json"
-CACHE_FILE_CN = Path(__file__).parent / "cache" / "cn_valuations.json"
+CACHE_FILE        = Path(__file__).parent / "cache" / "valuations.json"
+CACHE_FILE_CN     = Path(__file__).parent / "cache" / "cn_valuations.json"
+CACHE_FILE_GROWTH = Path(__file__).parent / "cache" / "growth.json"
 
 
 def _load(path: Path) -> list:
@@ -46,9 +48,27 @@ def save_cn_cache(data: list):
     _save(CACHE_FILE_CN, data)
 
 
+def load_growth_cache() -> list:
+    return _load(CACHE_FILE_GROWTH)
+
+
+def save_growth_cache(data: list):
+    _save(CACHE_FILE_GROWTH, data)
+
+
 @app.route("/")
-def index():
+def portal():
+    return send_from_directory("static", "portal.html")
+
+
+@app.route("/valuation")
+def valuation_page():
     return send_from_directory("static", "index.html")
+
+
+@app.route("/growth")
+def growth_page():
+    return send_from_directory("static", "growth.html")
 
 
 @app.route("/api/valuations", methods=["GET"])
@@ -208,7 +228,56 @@ def cn_update_valuation():
     return jsonify({"error": "未找到该股票"}), 404
 
 
+# ════════════════════════════════════════════════════════════════
+#  增速模块  /api/growth/*
+# ════════════════════════════════════════════════════════════════
+
+@app.route("/api/growth/fetch", methods=["POST"])
+def growth_fetch():
+    """拉取指定美股的近五年收入及增长率"""
+    body = request.get_json()
+    if not body or "tickers" not in body:
+        return jsonify({"error": "请提供 tickers 列表"}), 400
+
+    tickers = body["tickers"]
+    if not isinstance(tickers, list) or len(tickers) == 0:
+        return jsonify({"error": "tickers 必须是非空数组"}), 400
+
+    if len(tickers) > 10:
+        return jsonify({"error": "单次最多查询10只股票"}), 400
+
+    results = fetch_multiple_growth(tickers)
+
+    # 合并到缓存
+    cache = load_growth_cache()
+    cache_map = {item["ticker"]: item for item in cache}
+    for item in results:
+        if "error" not in item:
+            cache_map[item["ticker"]] = item
+    save_growth_cache(list(cache_map.values()))
+
+    return jsonify(results)
+
+
+@app.route("/api/growth/data", methods=["GET"])
+def growth_get_data():
+    """返回缓存的所有增速数据"""
+    return jsonify(load_growth_cache())
+
+
+@app.route("/api/growth/delete", methods=["POST"])
+def growth_delete():
+    """从缓存中删除指定股票"""
+    body = request.get_json()
+    if not body or "ticker" not in body:
+        return jsonify({"error": "请提供 ticker"}), 400
+    ticker = body["ticker"].upper()
+    cache = [item for item in load_growth_cache() if item["ticker"] != ticker]
+    save_growth_cache(cache)
+    return jsonify({"success": True})
+
+
 if __name__ == "__main__":
-    print("\n  Stock Valuation 服务启动中...")
+    print("\n  Stock Tools 服务启动中...")
     print("  打开浏览器访问: http://localhost:5000\n")
     app.run(host="127.0.0.1", port=5000, debug=True)
