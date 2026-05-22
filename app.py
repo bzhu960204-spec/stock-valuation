@@ -12,6 +12,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from valuation_fetcher import fetch_multiple
 from cn_valuation_fetcher import fetch_multiple_cn
 from growth_fetcher import fetch_multiple_growth
+from lhb_fetcher import fetch_latest_lhb, fetch_range, get_history_dates, get_lhb_by_date
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -69,6 +70,11 @@ def valuation_page():
 @app.route("/growth")
 def growth_page():
     return send_from_directory("static", "growth.html")
+
+
+@app.route("/lhb")
+def lhb_page():
+    return send_from_directory("static", "lhb.html")
 
 
 @app.route("/api/valuations", methods=["GET"])
@@ -275,6 +281,46 @@ def growth_delete():
     cache = [item for item in load_growth_cache() if item["ticker"] != ticker]
     save_growth_cache(cache)
     return jsonify({"success": True})
+
+
+# ════════════════════════════════════════════════════════════════
+#  龙虎榜模块  /api/lhb/*
+# ════════════════════════════════════════════════════════════════
+
+@app.route("/api/lhb/fetch", methods=["POST"])
+def lhb_fetch():
+    """抓取最新交易日的龙虎榜数据"""
+    result = fetch_latest_lhb()
+    return jsonify(result)
+
+
+@app.route("/api/lhb/fetch-range", methods=["POST"])
+def lhb_fetch_range():
+    """抓取指定日期区间的龙虎榜数据"""
+    body = request.get_json()
+    start_date = (body or {}).get("start_date", "").strip()
+    end_date = (body or {}).get("end_date", "").strip()
+    if not start_date or not end_date:
+        return jsonify({"error": "请提供 start_date 和 end_date"}), 400
+    result = fetch_range(start_date, end_date)
+    return jsonify(result)
+
+
+@app.route("/api/lhb/dates", methods=["GET"])
+def lhb_dates():
+    """获取已存储的所有交易日列表"""
+    dates = get_history_dates()
+    return jsonify(dates)
+
+
+@app.route("/api/lhb/data", methods=["GET"])
+def lhb_data():
+    """按日期查询龙虎榜数据，参数 ?date=2024-05-20"""
+    trade_date = request.args.get("date")
+    if not trade_date:
+        return jsonify({"error": "请提供 date 参数"}), 400
+    items = get_lhb_by_date(trade_date)
+    return jsonify({"trade_date": trade_date, "items": items, "count": len(items)})
 
 
 if __name__ == "__main__":

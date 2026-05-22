@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>龙虎榜 - Stock Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .lhb-table th#th-explain.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        .lhb-table th#th-explain.sortable:hover { color: #e7e9ea; }
+            margin-bottom: 16px;
+            color: #71767b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #1d9bf0; }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .toolbar button {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #1d9bf0;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toolbar button:hover { background: #1a8cd8; }
+        .toolbar button:disabled {
+            background: #333;
+            color: #71767b;
+            cursor: not-allowed;
+        }
+        .toolbar select {
+            padding: 10px 14px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1a1f25;
+            color: #e7e9ea;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .toolbar input[type="date"] {
+            padding: 10px 12px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1a1f25;
+            color: #e7e9ea;
+            font-size: 0.9rem;
+            outline: none;
+            color-scheme: dark;
+        }
+        .toolbar input[type="date"]:focus { border-color: #1d9bf0; }
+        .toolbar .sep {
+            color: #71767b;
+            font-size: 0.85rem;
+        }
+        .toolbar .btn-secondary {
+            padding: 10px 20px;
+            border: 1px solid #2e3a47;
+            border-radius: 8px;
+            background: transparent;
+            color: #e7e9ea;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .toolbar .btn-secondary:hover { border-color: #1d9bf0; background: #1a2a3a; }
+        .toolbar .btn-secondary:disabled { color: #71767b; cursor: not-allowed; border-color: #333; background: transparent; }
+
+        .status-msg {
+            color: #71767b;
+            font-size: 0.85rem;
+            margin-left: 12px;
+        }
+
+        .lhb-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .lhb-table th {
+            text-align: center;
+            padding: 10px 14px;
+            color: #8899a6;
+            border-bottom: 2px solid #333;
+            background: #12171d;
+            position: sticky;
+            top: 0;
+        }
+        .lhb-table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid #1e2732;
+        }
+        .lhb-table tr:hover td {
+            background: #1a1f25;
+        }
+        .lhb-table .col-idx { width: 60px; text-align: center; }
+        .lhb-table .col-code { width: 100px; }
+        .lhb-table .col-change { width: 100px; text-align: right; }
+        .lhb-table td.col-idx { text-align: center; }
+        .lhb-table td.col-change { text-align: right; }
+        .change-pos { color: #f7443e; }
+        .change-neg { color: #00c853; }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #2e3a47;
+            background: transparent;
+            color: #8899a6;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, border-color 0.18s;
+            white-space: nowrap;
+        }
+        .chip:hover {
+            border-color: #71767b;
+            color: #e7e9ea;
+        }
+        .chip.active-all    { background: #1a2a3a; color: #1d9bf0; border-color: #1d9bf0; }
+        .chip.active-buy-all { background: #1a2e1a; color: #4ade80; border-color: #4ade80; }
+        .chip.active-normal  { background: #1f2a1a; color: #a3e635; border-color: #a3e635; }
+        .chip.active-zhumai  { background: #1e1a2e; color: #a78bfa; border-color: #a78bfa; }
+        .chip.active-fund    { background: #1a2a20; color: #34d399; border-color: #34d399; }
+        .chip.active-inst    { background: #2a1a1a; color: #f97316; border-color: #f97316; }
+        .chip.active-other   { background: #252018; color: #facc15; border-color: #facc15; }
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            background: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 返回首页</a>
+        <header>
+            <h1>🐉 龙虎榜</h1>
+        </header>
+
+        <div class="toolbar">
+            <button id="btn-fetch">抓取最新数据</button>
+            <select id="date-select">
+                <option value="">-- 选择历史日期 --</option>
+            </select>
+        </div>
+        <div class="toolbar" style="margin-bottom:16px;">
+            <span class="sep">拉取历史区间：</span>
+            <input type="date" id="range-start">
+            <span class="sep">至</span>
+            <input type="date" id="range-end">
+            <button class="btn-secondary" id="btn-fetch-range">拉取</button>
+            <span class="status-msg" id="status"></span>
+        </div>
+        <div class="filter-chips" style="margin-bottom:16px;">
+            <span style="color:#71767b;font-size:0.82rem;margin-right:4px;">分类：</span>
+            <button class="chip active-all" data-cat="all"><span class="chip-dot"></span>全部</button>
+            <button class="chip" data-cat="buy-all"><span class="chip-dot"></span>仅看买入</button>
+            <button class="chip" data-cat="normal"><span class="chip-dot"></span>普通席位买入</button>
+            <button class="chip" data-cat="zhumai"><span class="chip-dot"></span>买一主买</button>
+            <button class="chip" data-cat="fund"><span class="chip-dot"></span>游资/资金买入</button>
+            <button class="chip" data-cat="inst"><span class="chip-dot"></span>机构买入</button>
+            <button class="chip" data-cat="other"><span class="chip-dot"></span>其它</button>
+        </div>
+
+        <div id="table-wrapper">
+            <table class="lhb-table">
+                <thead>
+                    <tr>
+                        <th class="col-idx">序号</th>
+                        <th class="col-code">代码</th>
+                        <th>名称</th>
+                        <th>上榜原因</th>
+                        <th id="th-explain">解读 <span id="sort-icon" style="display:none;font-size:0.75rem;">&#8693;</span></th>
+                        <th class="col-change">涨跌幅</th>
+                    </tr>
+                </thead>
+                <tbody id="lhb-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="lhb.js"></script>
+</body>
+</html>
