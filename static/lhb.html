@@ -6,11 +6,13 @@
     <title>龙虎榜 - Stock Tools</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .lhb-table th#th-explain.sortable {
+        .lhb-table th#th-explain.sortable,
+        .lhb-table th#th-netbuy {
             cursor: pointer;
             user-select: none;
         }
-        .lhb-table th#th-explain.sortable:hover { color: #e7e9ea; }
+        .lhb-table th#th-explain.sortable:hover,
+        .lhb-table th#th-netbuy:hover { color: #e7e9ea; }
             margin-bottom: 16px;
             color: #71767b;
             text-decoration: none;
@@ -109,11 +111,15 @@
         .lhb-table tr:hover td {
             background: #1a1f25;
         }
-        .lhb-table .col-idx { width: 60px; text-align: center; }
-        .lhb-table .col-code { width: 100px; }
-        .lhb-table .col-change { width: 100px; text-align: right; }
+        .lhb-table .col-idx { width: 50px; text-align: center; }
+        .lhb-table .col-code { width: 90px; }
+        .lhb-table .col-change { width: 80px; text-align: right; }
+        .lhb-table .col-num   { width: 100px; text-align: right; }
+        .lhb-table .col-rate  { width: 80px; text-align: right; }
         .lhb-table td.col-idx { text-align: center; }
         .lhb-table td.col-change { text-align: right; }
+        .lhb-table td.col-num   { text-align: right; font-variant-numeric: tabular-nums; }
+        .lhb-table td.col-rate  { text-align: right; font-variant-numeric: tabular-nums; }
         .change-pos { color: #f7443e; }
         .change-neg { color: #00c853; }
 
@@ -148,6 +154,7 @@
         .chip.active-zhumai  { background: #1e1a2e; color: #a78bfa; border-color: #a78bfa; }
         .chip.active-fund    { background: #1a2a20; color: #34d399; border-color: #34d399; }
         .chip.active-inst    { background: #2a1a1a; color: #f97316; border-color: #f97316; }
+        .chip.active-inst-sell { background: #2a1a2a; color: #e879f9; border-color: #e879f9; }
         .chip.active-other   { background: #252018; color: #facc15; border-color: #facc15; }
         .chip-dot {
             width: 7px;
@@ -187,6 +194,7 @@
             <button class="chip" data-cat="zhumai"><span class="chip-dot"></span>买一主买</button>
             <button class="chip" data-cat="fund"><span class="chip-dot"></span>游资/资金买入</button>
             <button class="chip" data-cat="inst"><span class="chip-dot"></span>机构买入</button>
+            <button class="chip" data-cat="inst-sell"><span class="chip-dot"></span>机构卖出</button>
             <button class="chip" data-cat="other"><span class="chip-dot"></span>其它</button>
         </div>
 
@@ -200,6 +208,15 @@
                         <th>上榜原因</th>
                         <th id="th-explain">解读 <span id="sort-icon" style="display:none;font-size:0.75rem;">&#8693;</span></th>
                         <th class="col-change">涨跌幅</th>
+                        <th class="col-num sortable" id="th-netbuy">净买额(万) <span id="netbuy-sort-icon" style="font-size:0.75rem;">&#8693;</span></th>
+                        <th class="col-num">买入额(万)</th>
+                        <th class="col-num">卖出额(万)</th>
+                        <th class="col-num">龙虎榜成交(万)</th>
+                        <th class="col-num">总成交(万)</th>
+                        <th class="col-rate">净买占比</th>
+                        <th class="col-rate">成交占比</th>
+                        <th class="col-rate">换手率</th>
+                        <th class="col-num">流通市值(亿)</th>
                     </tr>
                 </thead>
                 <tbody id="lhb-body"></tbody>

@@ -10,18 +10,24 @@
     const tbody         = document.getElementById("lhb-body");
     const status        = document.getElementById("status");
     const chips         = document.querySelectorAll(".chip");
-    const thExplain     = document.getElementById("th-explain");
-    const sortIcon      = document.getElementById("sort-icon");
+    const thExplain       = document.getElementById("th-explain");
+    const sortIcon         = document.getElementById("sort-icon");
+    const thNetBuy         = document.getElementById("th-netbuy");
+    const netBuySortIcon   = document.getElementById("netbuy-sort-icon");
 
-    let allItems   = [];
-    let activeChip = "all";
-    let instSort   = null;   // null | "desc" | "asc"
+    let allItems    = [];
+    let activeChip  = "all";
+    let instSort    = null;   // null | "desc" | "asc"  — 解读列（机构数）
+    let netBuySort  = null;   // null | "desc" | "asc"  — 净买额列
 
     // ── 分类判断 ──────────────────────────────────────────────────
     function classify(info) {
         if (!info) return "other";
-        if (info.includes("普通席位")) return "normal";        if (info.includes("买一主买")) return "zhumai";        if (/\d+家机构买入/.test(info) || info.includes("机构买入")) return "inst";
-        if (info.includes("买入")) return "fund";   // 游资/地区资金/其它买入
+        if (info.includes("普通席位")) return "normal";
+        if (info.includes("买一主买")) return "zhumai";
+        if (/\d+家机构买入/.test(info) || info.includes("机构买入")) return "inst";
+        if (/\d+家机构卖出/.test(info) || info.includes("机构卖出")) return "inst-sell";
+        if (info.includes("买入")) return "fund";
         return "other";
     }
 
@@ -33,12 +39,21 @@
                 ? allItems.filter(x => ["normal", "zhumai", "fund", "inst"].includes(classify(x.explain_info)))
                 : allItems.filter(x => classify(x.explain_info) === activeChip);
 
-        // 按机构数排序（仅 inst 分类下生效）
-        if (activeChip === "inst" && instSort) {
+        // 按机构数排序（inst 和 inst-sell 分类下生效）
+        if ((activeChip === "inst" || activeChip === "inst-sell") && instSort) {
             filtered.sort((a, b) => {
                 const na = parseInt(a.explain_info) || 0;
                 const nb = parseInt(b.explain_info) || 0;
                 return instSort === "desc" ? nb - na : na - nb;
+            });
+        }
+
+        // 按净买额排序（所有分类均可用，优先级高于机构数排序）
+        if (netBuySort) {
+            filtered.sort((a, b) => {
+                const na = a.net_buy_amt ?? -Infinity;
+                const nb = b.net_buy_amt ?? -Infinity;
+                return netBuySort === "desc" ? nb - na : na - nb;
             });
         }
 
@@ -51,22 +66,42 @@
     }
 
     function updateSortHeader() {
-        const isInst = activeChip === "inst";
+        const isInst = activeChip === "inst" || activeChip === "inst-sell";
         thExplain.classList.toggle("sortable", isInst);
         sortIcon.style.display = isInst ? "inline" : "none";
         const icons = { null: "&#8693;", desc: "&#8595;", asc: "&#8593;" };
         sortIcon.innerHTML = icons[instSort] ?? "&#8693;";
     }
 
+    function updateNetBuySortHeader() {
+        const icons = { null: "&#8693;", desc: "&#8595;", asc: "&#8593;" };
+        netBuySortIcon.innerHTML = icons[netBuySort] ?? "&#8693;";
+    }
+
+    function fmtAmt(v) {
+        if (v == null) return "-";
+        return v.toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtRate(v) {
+        if (v == null) return "-";
+        return (v * 100).toFixed(2) + "%";
+    }
+    function fmtPct(v) {
+        if (v == null) return "-";
+        return v.toFixed(2) + "%";
+    }
+
     function renderTable(items) {
         if (!items || items.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#71767b;padding:40px">暂无数据</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;color:#71767b;padding:40px">暂无数据</td></tr>';
             return;
         }
         tbody.innerHTML = items.map((item, idx) => {
             const rate    = item.change_rate;
             const rateStr = rate != null ? rate.toFixed(2) + "%" : "-";
             const cls     = rate > 0 ? "change-pos" : rate < 0 ? "change-neg" : "";
+            const netCls  = item.net_buy_amt != null && item.net_buy_amt > 0 ? "change-pos"
+                          : item.net_buy_amt != null && item.net_buy_amt < 0 ? "change-neg" : "";
             return `<tr>
                 <td class="col-idx">${idx + 1}</td>
                 <td class="col-code">${item.code}</td>
@@ -74,6 +109,15 @@
                 <td>${item.explanation || ""}</td>
                 <td>${item.explain_info || ""}</td>
                 <td class="col-change ${cls}">${rateStr}</td>
+                <td class="col-num ${netCls}">${fmtAmt(item.net_buy_amt)}</td>
+                <td class="col-num">${fmtAmt(item.buy_amt)}</td>
+                <td class="col-num">${fmtAmt(item.sell_amt)}</td>
+                <td class="col-num">${fmtAmt(item.billboard_amt)}</td>
+                <td class="col-num">${fmtAmt(item.total_mkt_amt)}</td>
+                <td class="col-rate">${fmtPct(item.net_buy_rate)}</td>
+                <td class="col-rate">${fmtPct(item.billboard_rate)}</td>
+                <td class="col-rate">${fmtPct(item.turnover_rate)}</td>
+                <td class="col-num">${item.free_mkt_cap != null ? item.free_mkt_cap.toFixed(2) : "-"}</td>
             </tr>`;
         }).join("");
     }
@@ -172,18 +216,30 @@
     chips.forEach(chip => {
         chip.addEventListener("click", () => {
             activeChip = chip.dataset.cat;
-            if (activeChip !== "inst") instSort = null;
+            if (activeChip !== "inst" && activeChip !== "inst-sell") instSort = null;
+            netBuySort = null;
             chips.forEach(c => c.className = "chip");
             chip.classList.add(`active-${activeChip}`);
             updateSortHeader();
+            updateNetBuySortHeader();
             applyFilter();
         });
     });
 
     thExplain.addEventListener("click", () => {
-        if (activeChip !== "inst") return;
+        if (activeChip !== "inst" && activeChip !== "inst-sell") return;
         instSort = instSort === null ? "desc" : instSort === "desc" ? "asc" : null;
+        netBuySort = null;   // 两个排序互斥
         updateSortHeader();
+        updateNetBuySortHeader();
+        applyFilter();
+    });
+
+    thNetBuy.addEventListener("click", () => {
+        netBuySort = netBuySort === null ? "desc" : netBuySort === "desc" ? "asc" : null;
+        instSort = null;   // 两个排序互斥
+        updateSortHeader();
+        updateNetBuySortHeader();
         applyFilter();
     });
 
