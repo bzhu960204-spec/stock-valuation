@@ -14,11 +14,15 @@
     const sortIcon         = document.getElementById("sort-icon");
     const thNetBuy         = document.getElementById("th-netbuy");
     const netBuySortIcon   = document.getElementById("netbuy-sort-icon");
+    const searchInput      = document.getElementById("search-input");
+    const searchClear      = document.getElementById("search-clear");
+    const searchHint       = document.getElementById("search-hint");
 
     let allItems    = [];
     let activeChip  = "all";
     let instSort    = null;   // null | "desc" | "asc"  — 解读列（机构数）
     let netBuySort  = null;   // null | "desc" | "asc"  — 净买额列
+    let searchText  = "";     // 搜索关键词
 
     // ── 分类判断 ──────────────────────────────────────────────────
     function classify(info) {
@@ -33,11 +37,22 @@
 
     // ── 筛选 & 渲染 ────────────────────────────────────────────────
     function applyFilter() {
-        const filtered = activeChip === "all"
+        let filtered = activeChip === "all"
             ? allItems
             : activeChip === "buy-all"
                 ? allItems.filter(x => ["normal", "zhumai", "fund", "inst"].includes(classify(x.explain_info)))
                 : allItems.filter(x => classify(x.explain_info) === activeChip);
+
+        // 搜索框过滤
+        if (searchText) {
+            const kw = searchText.toLowerCase();
+            filtered = filtered.filter(x =>
+                (x.code         && x.code.toLowerCase().includes(kw)) ||
+                (x.name         && x.name.toLowerCase().includes(kw)) ||
+                (x.explanation  && x.explanation.toLowerCase().includes(kw)) ||
+                (x.explain_info && x.explain_info.toLowerCase().includes(kw))
+            );
+        }
 
         // 按机构数排序（inst 和 inst-sell 分类下生效）
         if ((activeChip === "inst" || activeChip === "inst-sell") && instSort) {
@@ -63,6 +78,15 @@
         const suffix = activeChip === "all" ? "" : `，显示 ${shown}/${total} 条`;
         const base = status.textContent.replace(/，显示.*/, "");
         setStatus(base + suffix);
+
+        // 更新搜索提示
+        if (searchText) {
+            searchHint.textContent = `搜索"${searchText}"：找到 ${shown} 条`;
+            searchClear.style.display = "inline";
+        } else {
+            searchHint.textContent = "";
+            searchClear.style.display = "none";
+        }
     }
 
     function updateSortHeader() {
@@ -240,6 +264,20 @@
         instSort = null;   // 两个排序互斥
         updateSortHeader();
         updateNetBuySortHeader();
+        applyFilter();
+    });
+
+    // ── 搜索框事件 ──────────────────────────────────────────────
+    searchInput.addEventListener("input", () => {
+        searchText = searchInput.value.trim();
+        applyFilter();
+    });
+
+    searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        searchText = "";
+        searchClear.style.display = "none";
+        searchHint.textContent = "";
         applyFilter();
     });
 

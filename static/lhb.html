@@ -163,6 +163,40 @@
             display: inline-block;
             background: currentColor;
         }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px 14px;
+            border: 1px solid #333;
+            border-radius: 20px;
+            background: #1a1f25;
+            color: #e7e9ea;
+            font-size: 0.88rem;
+            outline: none;
+            width: 280px;
+            transition: border-color 0.2s;
+        }
+        .search-bar input[type="text"]:focus { border-color: #1d9bf0; }
+        .search-bar input[type="text"]::placeholder { color: #55606b; }
+        .search-bar .search-clear {
+            background: none;
+            border: none;
+            color: #71767b;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 4px;
+            line-height: 1;
+            display: none;
+        }
+        .search-bar .search-clear:hover { color: #e7e9ea; }
+        .search-bar .search-hint {
+            color: #55606b;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -198,6 +232,11 @@
             <button class="chip" data-cat="other"><span class="chip-dot"></span>其它</button>
         </div>
 
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="🔍 搜索代码、名称、上榜原因、解读...">
+            <button class="search-clear" id="search-clear" title="清空">✕</button>
+            <span class="search-hint" id="search-hint"></span>
+        </div>
         <div id="table-wrapper">
             <table class="lhb-table">
                 <thead>
