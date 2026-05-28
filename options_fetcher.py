@@ -45,14 +45,17 @@ def _parse_option(opt: dict) -> tuple | None:
     return expiration, opt_type, record
 
 
-def _fetch_raw(ticker: str) -> dict:
-    """从 CBOE 拉取原始 JSON，返回按到期日分组的 {expiration: {"C": [...], "P": [...]}} 字典。"""
+def _fetch_raw(ticker: str) -> tuple:
+    """从 CBOE 拉取原始 JSON，返回 (grouped, snapshot_time) 元组。
+    grouped 格式: {expiration: {"C": [...], "P": [...]}}。
+    """
     url = _CBOE_URL.format(ticker=ticker.upper())
     resp = requests.get(url, headers=_HEADERS, timeout=15)
     if resp.status_code == 404:
         raise ValueError(f"未找到 {ticker} 的期权数据，请确认代码是否为美股")
     resp.raise_for_status()
     data = resp.json()
+    snapshot_time = data.get("timestamp", "")
     options_list = data.get("data", {}).get("options", [])
     grouped: dict[str, dict[str, list]] = {}
     for opt in options_list:
@@ -63,7 +66,7 @@ def _fetch_raw(ticker: str) -> dict:
         if expiration not in grouped:
             grouped[expiration] = {"C": [], "P": []}
         grouped[expiration][opt_type].append(record)
-    return grouped
+    return grouped, snapshot_time
 
 
 def fetch_options_chain(ticker: str) -> dict:
@@ -80,7 +83,7 @@ def fetch_options_chain(ticker: str) -> dict:
     }
     """
     try:
-        grouped = _fetch_raw(ticker)
+        grouped, snapshot_time = _fetch_raw(ticker)
         if not grouped:
             return {"ticker": ticker.upper(), "error": "未找到期权数据"}
 
@@ -91,6 +94,19 @@ def fetch_options_chain(ticker: str) -> dict:
         puts = sorted(grouped[nearest_exp]["P"], key=lambda x: x["strike"])
         all_strikes = sorted(set(c["strike"] for c in calls) | set(p["strike"] for p in puts))
 
+        # 计算各到期日的 Call/Put OI 汇总
+        expiration_summary = []
+        for exp in expirations:
+            call_oi = sum(c["openInterest"] for c in grouped[exp]["C"])
+            put_oi = sum(p["openInterest"] for p in grouped[exp]["P"])
+            cpr = round(call_oi / put_oi, 2) if put_oi > 0 else None
+            expiration_summary.append({
+                "expiration": exp,
+                "callOI": call_oi,
+                "putOI": put_oi,
+                "cpr": cpr,
+            })
+
         return {
             "ticker": ticker.upper(),
             "expiration": nearest_exp,
@@ -98,6 +114,8 @@ def fetch_options_chain(ticker: str) -> dict:
             "strikes": all_strikes,
             "calls": calls,
             "puts": puts,
+            "snapshotTime": snapshot_time,
+            "expirationSummary": expiration_summary,
         }
 
     except Exception as e:
@@ -107,7 +125,7 @@ def fetch_options_chain(ticker: str) -> dict:
 def fetch_options_by_expiration(ticker: str, expiration: str) -> dict:
     """获取指定行权日期的期权链"""
     try:
-        grouped = _fetch_raw(ticker)
+        grouped, snapshot_time = _fetch_raw(ticker)
         if not grouped:
             return {"ticker": ticker.upper(), "error": "未找到期权数据"}
 
@@ -125,6 +143,7 @@ def fetch_options_by_expiration(ticker: str, expiration: str) -> dict:
             "strikes": all_strikes,
             "calls": calls,
             "puts": puts,
+            "snapshotTime": snapshot_time,
         }
 
     except Exception as e:

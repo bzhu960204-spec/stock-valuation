@@ -107,6 +107,62 @@
             border-color: #1d9bf0;
             color: #e7e9ea;
         }
+
+        /* CPR 汇总表 */
+        .cpr-section {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 20px;
+        }
+        .cpr-section h4 {
+            color: #e7e9ea;
+            margin: 0 0 6px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .snapshot-time {
+            color: #71767b;
+            font-size: 0.78rem;
+            margin-bottom: 14px;
+        }
+        .table-wrapper { overflow-x: auto; }
+        .cpr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .cpr-table th {
+            color: #8899a6;
+            font-weight: 500;
+            text-align: left;
+            padding: 8px 14px;
+            border-bottom: 1px solid #2e3a47;
+            white-space: nowrap;
+        }
+        .cpr-table td {
+            padding: 8px 14px;
+            border-bottom: 1px solid #1e2732;
+            color: #e7e9ea;
+        }
+        .cpr-table tr:last-child td { border-bottom: none; }
+        .cpr-table tr.selected-row td { background: rgba(29,155,240,0.08); }
+        .cpr-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+        .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+        .cpr-bullish { color: #00ba7c; font-weight: 600; }
+        .cpr-bearish { color: #f4212e; font-weight: 600; }
+        .cpr-neutral { color: #e7e9ea; }
+        .bias-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+        .bias-bull { background: rgba(0,186,124,0.15); color: #00ba7c; }
+        .bias-bear { background: rgba(244,33,46,0.15); color: #f4212e; }
+        .bias-neutral { background: rgba(136,153,166,0.15); color: #8899a6; }
     </style>
 </head>
 <body>
