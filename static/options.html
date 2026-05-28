@@ -163,6 +163,240 @@
         .bias-bull { background: rgba(0,186,124,0.15); color: #00ba7c; }
         .bias-bear { background: rgba(244,33,46,0.15); color: #f4212e; }
         .bias-neutral { background: rgba(136,153,166,0.15); color: #8899a6; }
+
+        /* 历史记录面板 */
+        .history-section {
+            margin-top: 24px;
+        }
+        .history-section h3 {
+            color: #e7e9ea;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        .ticker-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .ticker-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.88rem;
+            color: #e7e9ea;
+        }
+        .ticker-chip:hover { border-color: #1d9bf0; }
+        .ticker-chip.active { border-color: #1d9bf0; background: rgba(29,155,240,0.08); }
+        .ticker-chip .chip-count {
+            font-size: 0.75rem;
+            color: #71767b;
+            background: #2e3a47;
+            border-radius: 10px;
+            padding: 2px 7px;
+        }
+        .ticker-chip .chip-delete {
+            color: #71767b;
+            font-size: 1rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .ticker-chip .chip-delete:hover { color: #f4212e; }
+
+        .snapshot-list {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+        .snapshot-list h4 {
+            color: #e7e9ea;
+            margin: 0 0 12px;
+            font-size: 0.95rem;
+        }
+        .snapshot-item {
+            border: 1px solid #2e3a47;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .snapshot-item:last-child { margin-bottom: 0; }
+        .snapshot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .snapshot-header:hover { background: rgba(255,255,255,0.03); }
+        .snapshot-header .snap-time {
+            color: #e7e9ea;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+        .snapshot-header .snap-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #8899a6;
+        }
+        .snapshot-body {
+            display: none;
+            padding: 0 14px 14px;
+        }
+        .snapshot-body.open { display: block; }
+
+        /* 完整期权链表格 */
+        .chain-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px 0 8px;
+            font-size: 0.85rem;
+            color: #8899a6;
+        }
+        .chain-controls select {
+            background: #16202a;
+            border: 1px solid #2e3a47;
+            border-radius: 6px;
+            color: #e7e9ea;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .chain-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .chain-table thead tr:first-child th {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .chain-table th {
+            color: #8899a6;
+            font-weight: 500;
+            padding: 6px 8px;
+            border-bottom: 1px solid #2e3a47;
+            white-space: nowrap;
+            text-align: right;
+        }
+        .chain-table th.strike-col { text-align: center; background: rgba(29,155,240,0.06); }
+        .chain-table th.call-hdr   { color: #00ba7c; text-align: center; }
+        .chain-table th.put-hdr    { color: #f4212e; text-align: center; }
+        .chain-table td {
+            padding: 4px 8px;
+            border-bottom: 1px solid #111820;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .chain-table td.strike-col {
+            text-align: center;
+            font-weight: 600;
+            background: rgba(29,155,240,0.06);
+            color: #1d9bf0;
+        }
+        .chain-table .call-cell { color: #00ba7c; }
+        .chain-table .put-cell  { color: #f4212e; }
+        .chain-table .dim { color: #555f6a; }
+        .chain-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+        .chain-table tbody tr:hover td.strike-col { background: rgba(29,155,240,0.10); }
+
+        /* 历史快照 Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.72);
+            z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: #16202a;
+            border: 1px solid #2e3a47;
+            border-radius: 16px;
+            width: 90%; max-width: 720px;
+            max-height: 80vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #2e3a47;
+            flex-shrink: 0;
+        }
+        .modal-header h3 { color: #e7e9ea; margin: 0; font-size: 1rem; }
+        .modal-header-actions { display: flex; gap: 8px; align-items: center; }
+        .modal-close {
+            background: none; border: none;
+            color: #71767b; font-size: 1.5rem; line-height: 1;
+            cursor: pointer; padding: 0 4px;
+        }
+        .modal-close:hover { color: #e7e9ea; }
+        .modal-delete-btn {
+            background: none; border: 1px solid #3a1a1a;
+            border-radius: 6px; color: #f4212e;
+            font-size: 0.8rem; padding: 5px 10px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .modal-delete-btn:hover { background: rgba(244,33,46,0.12); }
+        .modal-body { overflow-y: auto; }
+        .modal-snap-row {
+            display: flex; align-items: center;
+            padding: 13px 20px;
+            border-bottom: 1px solid #1e2732;
+            cursor: pointer;
+            transition: background 0.15s;
+            gap: 16px;
+        }
+        .modal-snap-row:hover { background: rgba(29,155,240,0.07); }
+        .modal-snap-row:last-child { border-bottom: none; }
+        .modal-snap-time { color: #e7e9ea; font-size: 0.88rem; font-weight: 500; min-width: 200px; }
+        .modal-snap-stats { display: flex; gap: 16px; font-size: 0.82rem; color: #8899a6; flex: 1; flex-wrap: wrap; }
+        .modal-snap-stats b { color: #c9d1d9; }
+        .modal-snap-arrow { color: #1d9bf0; font-size: 1.2rem; }
+
+        /* 快照阅读模式 */
+        .reading-overlay {
+            position: fixed; inset: 0;
+            background: #0d1117;
+            z-index: 200;
+            display: flex; flex-direction: column;
+            overflow-y: auto;
+        }
+        .reading-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 24px;
+            background: #16202a;
+            border-bottom: 1px solid #2e3a47;
+            position: sticky; top: 0; z-index: 10;
+            flex-shrink: 0;
+        }
+        .reading-header-title { color: #e7e9ea; font-size: 0.92rem; font-weight: 600; }
+        .back-btn {
+            background: none; border: 1px solid #2e3a47;
+            border-radius: 8px; color: #8899a6;
+            padding: 7px 14px; cursor: pointer;
+            font-size: 0.85rem; transition: all 0.2s;
+        }
+        .back-btn:hover { border-color: #1d9bf0; color: #1d9bf0; }
+        .reading-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+            width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +422,37 @@
             <div id="loading" class="loading hidden">⏳ 正在查询期权数据...</div>
             <div id="results"></div>
         </section>
+
+        <section class="history-section" id="historySection">
+            <h3>📂 历史快照</h3>
+            <div class="ticker-list" id="tickerList"></div>
+            <div id="snapshotPanel"></div>
+        </section>
     </div>
+
+        <!-- 历史快照列表 Modal -->
+        <div id="historyModal" class="modal-overlay hidden" onclick="closeHistoryModal(event)">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 id="modalTitle">历史快照</h3>
+                    <div class="modal-header-actions">
+                        <button class="modal-delete-btn" onclick="deleteCurrentTicker()">&#128465; 删除全部</button>
+                        <button class="modal-close" onclick="closeHistoryModal()">&#215;</button>
+                    </div>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+
+        <!-- 快照阅读模式 -->
+        <div id="readingMode" class="reading-overlay hidden">
+            <div class="reading-header">
+                <button class="back-btn" onclick="closeReadingMode()">&#8592; 返回列表</button>
+                <span class="reading-header-title" id="readingTitle"></span>
+                <span style="width:120px"></span>
+            </div>
+            <div class="reading-content" id="readingContent"></div>
+        </div>
 
     <script src="options.js"></script>
 </body>

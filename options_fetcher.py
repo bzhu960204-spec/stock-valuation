@@ -94,11 +94,15 @@ def fetch_options_chain(ticker: str) -> dict:
         puts = sorted(grouped[nearest_exp]["P"], key=lambda x: x["strike"])
         all_strikes = sorted(set(c["strike"] for c in calls) | set(p["strike"] for p in puts))
 
-        # 计算各到期日的 Call/Put OI 汇总
+        # 计算各到期日的 Call/Put OI 汇总 + 完整期权链
         expiration_summary = []
+        expiration_data = {}
         for exp in expirations:
-            call_oi = sum(c["openInterest"] for c in grouped[exp]["C"])
-            put_oi = sum(p["openInterest"] for p in grouped[exp]["P"])
+            exp_calls = sorted(grouped[exp]["C"], key=lambda x: x["strike"])
+            exp_puts  = sorted(grouped[exp]["P"], key=lambda x: x["strike"])
+            exp_strikes = sorted(set(c["strike"] for c in exp_calls) | set(p["strike"] for p in exp_puts))
+            call_oi = sum(c["openInterest"] for c in exp_calls)
+            put_oi  = sum(p["openInterest"] for p in exp_puts)
             cpr = round(call_oi / put_oi, 2) if put_oi > 0 else None
             expiration_summary.append({
                 "expiration": exp,
@@ -106,6 +110,11 @@ def fetch_options_chain(ticker: str) -> dict:
                 "putOI": put_oi,
                 "cpr": cpr,
             })
+            expiration_data[exp] = {
+                "strikes": exp_strikes,
+                "calls": exp_calls,
+                "puts": exp_puts,
+            }
 
         return {
             "ticker": ticker.upper(),
@@ -116,6 +125,7 @@ def fetch_options_chain(ticker: str) -> dict:
             "puts": puts,
             "snapshotTime": snapshot_time,
             "expirationSummary": expiration_summary,
+            "expirationData": expiration_data,
         }
 
     except Exception as e:

@@ -6,6 +6,7 @@ Stock Valuation - Flask Backend
 """
 
 import json
+import sqlite3
 from pathlib import Path
 from flask import Flask, jsonify, request, send_from_directory
 
@@ -21,6 +22,8 @@ app = Flask(__name__, static_folder="static", static_url_path="")
 CACHE_FILE        = Path(__file__).parent / "cache" / "valuations.json"
 CACHE_FILE_CN     = Path(__file__).parent / "cache" / "cn_valuations.json"
 CACHE_FILE_GROWTH = Path(__file__).parent / "cache" / "growth.json"
+CACHE_FILE_OPTIONS = Path(__file__).parent / "cache" / "options_history.json"  # legacy, migrated to SQLite
+DB_OPTIONS        = Path(__file__).parent / "cache" / "options.db"
 
 
 def _load(path: Path) -> list:
@@ -328,6 +331,45 @@ def lhb_data():
 #  期权模块  /api/options/*
 # ════════════════════════════════════════════════════════════════
 
+def _get_options_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(str(DB_OPTIONS))
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _init_options_db():
+    """建表 + 从旧 JSON 迁移数据（一次性）"""
+    DB_OPTIONS.parent.mkdir(exist_ok=True)
+    with _get_options_db() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS options_snapshots (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                ticker        TEXT NOT NULL,
+                snapshot_time TEXT NOT NULL,
+                data_json     TEXT NOT NULL,
+                UNIQUE(ticker, snapshot_time)
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_options_ticker ON options_snapshots(ticker)")
+        conn.commit()
+    # 一次性迁移旧 JSON
+    if CACHE_FILE_OPTIONS.exists():
+        try:
+            old = json.loads(CACHE_FILE_OPTIONS.read_text(encoding="utf-8"))
+            with _get_options_db() as conn:
+                for tkr, snaps in old.items():
+                    for snap in snaps:
+                        conn.execute(
+                            "INSERT OR IGNORE INTO options_snapshots (ticker, snapshot_time, data_json) VALUES (?, ?, ?)",
+                            (tkr.upper(), snap.get("snapshotTime", ""), json.dumps(snap, ensure_ascii=False))
+                        )
+                conn.commit()
+            CACHE_FILE_OPTIONS.rename(CACHE_FILE_OPTIONS.with_suffix(".json.migrated"))
+            print("[options] Migrated history from JSON to SQLite")
+        except Exception as e:
+            print(f"[options] Migration warning: {e}")
+
+
 @app.route("/options")
 def options_page():
     return send_from_directory("static", "options.html")
@@ -335,7 +377,7 @@ def options_page():
 
 @app.route("/api/options/chain", methods=["POST"])
 def options_chain():
-    """获取指定股票最近行权日的期权链"""
+    """获取指定股票最近行权日的期权链，并保存快照"""
     body = request.get_json()
     if not body or "ticker" not in body:
         return jsonify({"error": "请提供 ticker"}), 400
@@ -345,6 +387,24 @@ def options_chain():
         return jsonify({"error": "ticker 不能为空"}), 400
 
     result = fetch_options_chain(ticker)
+
+    # 保存快照到 SQLite
+    if "error" not in result and result.get("expirationSummary"):
+        snapshot = {
+            "snapshotTime": result.get("snapshotTime", ""),
+            "expirationSummary": result["expirationSummary"],
+            "expirationData": result.get("expirationData", {}),
+        }
+        try:
+            with _get_options_db() as conn:
+                conn.execute(
+                    "INSERT OR IGNORE INTO options_snapshots (ticker, snapshot_time, data_json) VALUES (?, ?, ?)",
+                    (ticker, snapshot["snapshotTime"], json.dumps(snapshot, ensure_ascii=False))
+                )
+                conn.commit()
+        except Exception as e:
+            print(f"[options] Snapshot save error: {e}")
+
     return jsonify(result)
 
 
@@ -364,6 +424,47 @@ def options_chain_by_date():
     result = fetch_options_by_expiration(ticker, expiration)
     return jsonify(result)
 
+
+@app.route("/api/options/history", methods=["GET"])
+def options_history_list():
+    """返回所有已缓存的期权快照列表 (ticker -> 快照数量 + 最近时间)"""
+    with _get_options_db() as conn:
+        rows = conn.execute("""
+            SELECT ticker, COUNT(*) as count, MAX(snapshot_time) as latest_time
+            FROM options_snapshots
+            GROUP BY ticker
+            ORDER BY latest_time DESC
+        """).fetchall()
+    return jsonify([{"ticker": r["ticker"], "count": r["count"], "latestTime": r["latest_time"]} for r in rows])
+
+
+@app.route("/api/options/history/<ticker>", methods=["GET"])
+def options_history_detail(ticker):
+    """返回指定股票的全部快照历史（按时间升序）"""
+    ticker = ticker.strip().upper()
+    with _get_options_db() as conn:
+        rows = conn.execute(
+            "SELECT data_json FROM options_snapshots WHERE ticker=? ORDER BY snapshot_time ASC",
+            (ticker,)
+        ).fetchall()
+    snapshots = [json.loads(r["data_json"]) for r in rows]
+    return jsonify({"ticker": ticker, "snapshots": snapshots})
+
+
+@app.route("/api/options/delete-history", methods=["POST"])
+def options_delete_history():
+    """删除指定股票的快照历史"""
+    body = request.get_json()
+    if not body or "ticker" not in body:
+        return jsonify({"error": "请提供 ticker"}), 400
+    ticker = body["ticker"].strip().upper()
+    with _get_options_db() as conn:
+        conn.execute("DELETE FROM options_snapshots WHERE ticker=?", (ticker,))
+        conn.commit()
+    return jsonify({"success": True})
+
+
+_init_options_db()
 
 if __name__ == "__main__":
     print("\n  Stock Tools 服务启动中...")
