@@ -13,6 +13,7 @@ from valuation_fetcher import fetch_multiple
 from cn_valuation_fetcher import fetch_multiple_cn
 from growth_fetcher import fetch_multiple_growth
 from lhb_fetcher import fetch_latest_lhb, fetch_range, get_history_dates, get_lhb_by_date
+from options_fetcher import fetch_options_chain, fetch_options_by_expiration
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -321,6 +322,47 @@ def lhb_data():
         return jsonify({"error": "请提供 date 参数"}), 400
     items = get_lhb_by_date(trade_date)
     return jsonify({"trade_date": trade_date, "items": items, "count": len(items)})
+
+
+# ════════════════════════════════════════════════════════════════
+#  期权模块  /api/options/*
+# ════════════════════════════════════════════════════════════════
+
+@app.route("/options")
+def options_page():
+    return send_from_directory("static", "options.html")
+
+
+@app.route("/api/options/chain", methods=["POST"])
+def options_chain():
+    """获取指定股票最近行权日的期权链"""
+    body = request.get_json()
+    if not body or "ticker" not in body:
+        return jsonify({"error": "请提供 ticker"}), 400
+
+    ticker = body["ticker"].strip().upper()
+    if not ticker:
+        return jsonify({"error": "ticker 不能为空"}), 400
+
+    result = fetch_options_chain(ticker)
+    return jsonify(result)
+
+
+@app.route("/api/options/chain-by-date", methods=["POST"])
+def options_chain_by_date():
+    """获取指定行权日期的期权链"""
+    body = request.get_json()
+    if not body or "ticker" not in body or "expiration" not in body:
+        return jsonify({"error": "请提供 ticker 和 expiration"}), 400
+
+    ticker = body["ticker"].strip().upper()
+    expiration = body["expiration"].strip()
+
+    if not ticker or not expiration:
+        return jsonify({"error": "参数不能为空"}), 400
+
+    result = fetch_options_by_expiration(ticker, expiration)
+    return jsonify(result)
 
 
 if __name__ == "__main__":

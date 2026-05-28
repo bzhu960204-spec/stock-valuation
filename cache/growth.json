@@ -30,5 +30,37 @@
         "growth": 0.1311
       }
     ]
+  },
+  {
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "currency": "USD",
+    "revenue": [
+      {
+        "year": "2021",
+        "revenue": 365817.0,
+        "growth": 0.3326
+      },
+      {
+        "year": "2022",
+        "revenue": 394328.0,
+        "growth": 0.0779
+      },
+      {
+        "year": "2023",
+        "revenue": 383285.0,
+        "growth": -0.028
+      },
+      {
+        "year": "2024",
+        "revenue": 391035.0,
+        "growth": 0.0202
+      },
+      {
+        "year": "2025",
+        "revenue": 416161.0,
+        "growth": 0.0643
+      }
+    ]
   }
 ]
