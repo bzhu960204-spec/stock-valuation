@@ -39,6 +39,30 @@ function sp500Badge(isSp500) {
     return `<span class="badge badge-sp500">S&P 500</span>`;
 }
 
+function earningsResultBadge(item) {
+    // 如果已经公布了实际EPS
+    if (!item.reported) {
+        // 如果日期已过但没有actual数据，标记为"已发布"
+        const today = new Date();
+        const earningsDate = new Date(item.date + 'T00:00:00');
+        if (earningsDate < today) {
+            return `<span class="badge badge-reported">已发布</span>`;
+        }
+        return '';
+    }
+    const forecast = parseFloat((item.eps_forecast || '').replace('$', ''));
+    const actual = parseFloat((item.eps_actual || '').replace('$', ''));
+    if (isNaN(actual)) return `<span class="badge badge-reported">已发布</span>`;
+    if (isNaN(forecast)) {
+        return `<span class="badge badge-reported">已公布 ${item.eps_actual}</span>`;
+    }
+    if (actual >= forecast) {
+        return `<span class="badge badge-beat">EPS Beat</span>`;
+    } else {
+        return `<span class="badge badge-miss">EPS Miss</span>`;
+    }
+}
+
 function sectorBadge(sector) {
     if (!sector || sector === '—') return '';
     return `<span class="badge badge-sector">${sector}</span>`;
@@ -194,20 +218,30 @@ function showDetail(dateStr, scroll = true) {
     }
 
     title.textContent = `📋 ${formatDateCN(dateStr)} — 共 ${earnings.length} 家公司`;
-    list.innerHTML = earnings.map(item => `
-        <div class="detail-item">
+    list.innerHTML = earnings.map(item => {
+        const epsInfo = item.reported
+            ? `EPS实际 ${item.eps_actual} (预估 ${item.eps_forecast || '—'})${item.surprise ? ' · Surprise ' + item.surprise : ''}`
+            : `EPS预估 ${item.eps_forecast || '—'}`;
+        const resultBadge = earningsResultBadge(item);
+        // 对于已报告的财报（日期已过或有actual数据），不显示"未公布"的时间badge
+        const isPast = new Date(item.date + 'T00:00:00') < new Date();
+        const timeBadgeHtml = ((item.reported || isPast) && item.time === '未公布') ? '' : timingBadge(item.time, item.confirmed);
+        return `
+        <div class="detail-item" data-ticker="${item.ticker}" data-date="${item.date}">
             <div class="ticker">${item.ticker}</div>
             <div class="info">
                 <div class="name" title="${item.name}">${item.name}</div>
-                <div class="meta">市值 ${item.market_cap} · 分析师 ${item.num_estimates}人 · EPS预估 ${item.eps_forecast || '—'}</div>
+                <div class="meta">市值 ${item.market_cap} · 分析师 ${item.num_estimates}人 · ${epsInfo}</div>
             </div>
             <div class="badges">
+                ${resultBadge}
                 ${sectorBadge(item.sector)}
-                ${timingBadge(item.time, item.confirmed)}
+                ${timeBadgeHtml}
                 ${sp500Badge(item.sp500)}
             </div>
+            <button class="note-btn" onclick="openNoteEditor('${item.ticker}', '${item.date}')" title="记录笔记">📝</button>
         </div>
-    `).join('');
+    `}).join('');
 
     panel.classList.add('active');
     if (scroll) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -376,3 +410,169 @@ async function fetchCurrentMonth() {
 }
 
 document.addEventListener('DOMContentLoaded', loadCalendar);
+
+// ── Markdown 笔记功能 ────────────────────────────────────────────
+
+let currentNoteTicker = null;
+let currentNoteDate = null;
+
+async function openNoteEditor(ticker, date) {
+    currentNoteTicker = ticker;
+    currentNoteDate = date;
+    const modal = document.getElementById('noteModal');
+    const titleEl = document.getElementById('noteModalTitle');
+    const editor = document.getElementById('noteEditor');
+    const preview = document.getElementById('notePreview');
+    const toggleBtn = document.getElementById('noteToggleBtn');
+
+    titleEl.textContent = `${ticker} - ${date} 财报笔记`;
+    editor.value = '';
+    preview.innerHTML = '';
+
+    // 加载已有笔记
+    try {
+        const resp = await fetch(`/api/earnings/notes?ticker=${ticker}&date=${date}`);
+        if (resp.ok) {
+            const data = await resp.json();
+            editor.value = data.content || '';
+        }
+    } catch (e) {
+        console.error('加载笔记失败', e);
+    }
+
+    // 默认进入编辑模式
+    editor.style.display = '';
+    preview.style.display = 'none';
+    toggleBtn.textContent = '预览';
+    toggleBtn.setAttribute('data-mode', 'edit');
+
+    modal.classList.add('active');
+}
+
+function closeNoteModal() {
+    document.getElementById('noteModal').classList.remove('active');
+}
+
+function toggleNotePreview() {
+    const editor = document.getElementById('noteEditor');
+    const preview = document.getElementById('notePreview');
+    const toggleBtn = document.getElementById('noteToggleBtn');
+    const mode = toggleBtn.getAttribute('data-mode');
+
+    if (mode === 'edit') {
+        // 切换到预览
+        preview.innerHTML = renderMarkdown(editor.value);
+        editor.style.display = 'none';
+        preview.style.display = '';
+        toggleBtn.textContent = '编辑';
+        toggleBtn.setAttribute('data-mode', 'preview');
+    } else {
+        // 切换到编辑
+        editor.style.display = '';
+        preview.style.display = 'none';
+        toggleBtn.textContent = '预览';
+        toggleBtn.setAttribute('data-mode', 'edit');
+    }
+}
+
+async function saveNote() {
+    const editor = document.getElementById('noteEditor');
+    const content = editor.value;
+
+    try {
+        const resp = await fetch('/api/earnings/notes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ticker: currentNoteTicker,
+                date: currentNoteDate,
+                content: content
+            })
+        });
+        if (resp.ok) {
+            // 保存成功 → 切换到预览模式
+            const preview = document.getElementById('notePreview');
+            const toggleBtn = document.getElementById('noteToggleBtn');
+            preview.innerHTML = renderMarkdown(content);
+            document.getElementById('noteEditor').style.display = 'none';
+            preview.style.display = '';
+            toggleBtn.textContent = '编辑';
+            toggleBtn.setAttribute('data-mode', 'preview');
+            showToast('笔记已保存');
+        } else {
+            showToast('保存失败', true);
+        }
+    } catch (e) {
+        showToast('保存失败: ' + e.message, true);
+    }
+}
+
+function showToast(msg, isError = false) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.className = 'toast active' + (isError ? ' error' : '');
+    setTimeout(() => toast.classList.remove('active'), 2500);
+}
+
+// ── 简易 Markdown 渲染 ──────────────────────────────────────────
+
+function renderMarkdown(text) {
+    if (!text || !text.trim()) return '<p style="color:#71767b;">暂无笔记</p>';
+
+    let html = text;
+
+    // 代码块 (```...```)
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+        return `<pre><code class="lang-${lang}">${escapeHtml(code.trim())}</code></pre>`;
+    });
+
+    // 行内代码
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // 标题 (h1-h4)
+    html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+    // 粗体和斜体
+    html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+    // 删除线
+    html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+
+    // 无序列表
+    html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`);
+
+    // 引用块
+    html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+    html = html.replace(/<\/blockquote>\n<blockquote>/g, '<br>');
+
+    // 水平线
+    html = html.replace(/^---$/gm, '<hr>');
+
+    // 链接
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+    // 段落（双换行）
+    html = html.replace(/\n\n/g, '</p><p>');
+    // 单换行转 <br>（排除已有HTML标签的行）
+    html = html.replace(/\n/g, '<br>');
+
+    // 包装
+    if (!html.startsWith('<')) html = '<p>' + html + '</p>';
+
+    return html;
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}

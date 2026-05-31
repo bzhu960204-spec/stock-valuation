@@ -478,6 +478,57 @@ _init_options_db()
 #  财报日历模块  /api/earnings/*
 # ════════════════════════════════════════════════════════════════
 
+EARNINGS_NOTES_FILE = Path(__file__).parent / "cache" / "earnings_notes.json"
+
+
+def _load_earnings_notes() -> dict:
+    if EARNINGS_NOTES_FILE.exists():
+        try:
+            return json.loads(EARNINGS_NOTES_FILE.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, ValueError):
+            pass
+    return {}
+
+
+def _save_earnings_notes(data: dict):
+    EARNINGS_NOTES_FILE.parent.mkdir(exist_ok=True)
+    EARNINGS_NOTES_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+@app.route("/api/earnings/notes", methods=["GET"])
+def earnings_get_note():
+    """获取单条财报笔记。参数: ?ticker=AAPL&date=2026-06-02"""
+    ticker = (request.args.get("ticker") or "").upper()
+    date = request.args.get("date") or ""
+    if not ticker or not date:
+        return jsonify({"error": "需要 ticker 和 date 参数"}), 400
+    key = f"{ticker}_{date}"
+    notes = _load_earnings_notes()
+    return jsonify({"content": notes.get(key, "")})
+
+
+@app.route("/api/earnings/notes", methods=["POST"])
+def earnings_save_note():
+    """保存财报笔记。body: { ticker, date, content }"""
+    body = request.get_json(silent=True) or {}
+    ticker = (body.get("ticker") or "").upper()
+    date = body.get("date") or ""
+    content = body.get("content", "")
+    if not ticker or not date:
+        return jsonify({"error": "需要 ticker 和 date"}), 400
+    # 限制内容长度
+    if len(content) > 50000:
+        return jsonify({"error": "笔记内容过长（最多50000字符）"}), 400
+    key = f"{ticker}_{date}"
+    notes = _load_earnings_notes()
+    if content.strip():
+        notes[key] = content
+    else:
+        notes.pop(key, None)
+    _save_earnings_notes(notes)
+    return jsonify({"ok": True})
+
+
 @app.route("/api/earnings/calendar", methods=["GET"])
 def earnings_calendar():
     """获取财报日历数据（返回所有已缓存月份）"""

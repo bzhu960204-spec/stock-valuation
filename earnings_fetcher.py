@@ -352,7 +352,9 @@ def _fetch_entries_for_date(date_str: str, sp500: set) -> list:
     for row in important:
         cap_raw = parse_market_cap(row.get("marketCap", ""))
         ticker = row.get("symbol", "").upper()
-        entries.append({
+        eps_actual = row.get("epsActual", "")
+        surprise = row.get("surprise", "")
+        entry = {
             "ticker": ticker,
             "name": row.get("name", ""),
             "date": date_str,
@@ -362,9 +364,13 @@ def _fetch_entries_for_date(date_str: str, sp500: set) -> list:
             "sp500": ticker in sp500,
             "sector": get_sector(ticker),
             "eps_forecast": row.get("epsForecast", ""),
+            "eps_actual": eps_actual if eps_actual else "",
+            "surprise": surprise if surprise else "",
             "num_estimates": int(row.get("noOfEsts", "0") or "0"),
             "confirmed": row.get("time", "") != "time-not-supplied",
-        })
+            "reported": bool(eps_actual and eps_actual.strip()),
+        }
+        entries.append(entry)
     entries.sort(key=lambda x: x["market_cap_raw"], reverse=True)
     return entries
 

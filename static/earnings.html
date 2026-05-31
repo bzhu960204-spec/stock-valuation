@@ -353,6 +353,21 @@
             color: #f7b731;
             border: 1px solid #f7b73144;
         }
+        .badge-beat {
+            background: #00b87422;
+            color: #00b874;
+            border: 1px solid #00b87444;
+        }
+        .badge-miss {
+            background: #f4212e22;
+            color: #f4212e;
+            border: 1px solid #f4212e44;
+        }
+        .badge-reported {
+            background: #71767b22;
+            color: #a0a8b0;
+            border: 1px solid #71767b44;
+        }
 
         /* Loading */
         .loading-box {
@@ -372,6 +387,180 @@
             margin-bottom: 12px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Note button */
+        .note-btn {
+            background: none;
+            border: 1px solid #2e3a47;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, background 0.2s;
+            flex-shrink: 0;
+        }
+        .note-btn:hover {
+            border-color: #1d9bf0;
+            background: #1d9bf015;
+        }
+
+        /* Note Modal */
+        .note-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .note-modal.active {
+            display: flex;
+        }
+        .note-modal-content {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .note-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #2e3a47;
+        }
+        .note-modal-header h3 {
+            margin: 0;
+            color: #1d9bf0;
+            font-size: 1rem;
+        }
+        .note-modal-header .close-btn {
+            background: none;
+            border: none;
+            color: #71767b;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .note-modal-header .close-btn:hover { color: #e7e9ea; }
+
+        .note-modal-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 10px 20px;
+            border-bottom: 1px solid #2e3a47;
+        }
+        .note-modal-toolbar button {
+            background: #12171d;
+            border: 1px solid #2e3a47;
+            color: #e7e9ea;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            transition: border-color 0.2s;
+        }
+        .note-modal-toolbar button:hover { border-color: #1d9bf0; }
+        .note-modal-toolbar .save-btn {
+            background: #1d9bf0;
+            border-color: #1d9bf0;
+            color: #fff;
+            font-weight: 600;
+        }
+        .note-modal-toolbar .save-btn:hover { background: #1a8cd8; }
+
+        .note-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            min-height: 300px;
+        }
+        .note-modal-body textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+            background: #12171d;
+            border: 1px solid #2e3a47;
+            border-radius: 8px;
+            color: #e7e9ea;
+            padding: 14px;
+            font-family: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        .note-modal-body textarea:focus {
+            outline: none;
+            border-color: #1d9bf0;
+        }
+        .note-preview {
+            color: #e7e9ea;
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
+        .note-preview h1 { font-size: 1.4rem; color: #e7e9ea; margin: 16px 0 8px; border-bottom: 1px solid #2e3a47; padding-bottom: 6px; }
+        .note-preview h2 { font-size: 1.2rem; color: #e7e9ea; margin: 14px 0 6px; }
+        .note-preview h3 { font-size: 1.05rem; color: #e7e9ea; margin: 12px 0 4px; }
+        .note-preview h4 { font-size: 0.95rem; color: #b0b8c0; margin: 10px 0 4px; }
+        .note-preview strong { color: #fff; }
+        .note-preview code {
+            background: #2e3a47;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+        }
+        .note-preview pre {
+            background: #12171d;
+            border: 1px solid #2e3a47;
+            border-radius: 6px;
+            padding: 12px;
+            overflow-x: auto;
+        }
+        .note-preview pre code {
+            background: none;
+            padding: 0;
+        }
+        .note-preview blockquote {
+            border-left: 3px solid #1d9bf0;
+            padding-left: 12px;
+            color: #8899a6;
+            margin: 10px 0;
+        }
+        .note-preview ul { padding-left: 20px; }
+        .note-preview li { margin: 4px 0; }
+        .note-preview hr { border: none; border-top: 1px solid #2e3a47; margin: 16px 0; }
+        .note-preview a { color: #1d9bf0; text-decoration: none; }
+        .note-preview a:hover { text-decoration: underline; }
+        .note-preview del { color: #71767b; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1d9bf0;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 2000;
+        }
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.error { background: #f4212e; }
     </style>
 </head>
 <body>
@@ -419,5 +608,23 @@
     </div>
 
     <script src="earnings.js"></script>
+
+    <!-- 笔记弹窗 -->
+    <div class="note-modal" id="noteModal">
+        <div class="note-modal-content">
+            <div class="note-modal-header">
+                <h3 id="noteModalTitle">财报笔记</h3>
+                <button class="close-btn" onclick="closeNoteModal()">✕</button>
+            </div>
+            <div class="note-modal-toolbar">
+                <button id="noteToggleBtn" data-mode="edit" onclick="toggleNotePreview()">预览</button>
+                <button class="save-btn" onclick="saveNote()">保存</button>
+            </div>
+            <div class="note-modal-body">
+                <textarea id="noteEditor" placeholder="在此输入 Markdown 格式的笔记...&#10;&#10;支持: # 标题, **粗体**, *斜体*, - 列表, > 引用, `代码`, ```代码块```"></textarea>
+                <div class="note-preview" id="notePreview" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
