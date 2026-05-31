@@ -113,6 +113,47 @@
         .month-status .fetched { color: #00b874; }
         .month-status .not-fetched { color: #f7b731; }
 
+        /* Sector Filter */
+        .sector-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 16px;
+            min-height: 32px;
+        }
+        .sector-filter-label {
+            font-size: 0.8rem;
+            color: #71767b;
+            margin-right: 4px;
+        }
+        .sector-pill {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 14px;
+            border: 1px solid #2e3a47;
+            background: #1a1f25;
+            color: #8899a6;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .sector-pill:hover {
+            border-color: #0ea5e9;
+            color: #67c7eb;
+        }
+        .sector-pill.active {
+            background: #0ea5e922;
+            border-color: #0ea5e9;
+            color: #67c7eb;
+            font-weight: 600;
+        }
+        .sector-pill.all-pill.active {
+            background: #1d9bf022;
+            border-color: #1d9bf0;
+            color: #1d9bf0;
+        }
+
         /* Calendar Grid */
         .calendar-grid {
             display: grid;
@@ -297,6 +338,11 @@
             color: #71767b;
             border: 1px solid #71767b44;
         }
+        .badge-sector {
+            background: #0ea5e922;
+            color: #67c7eb;
+            border: 1px solid #0ea5e944;
+        }
         .badge-sp500 {
             background: #7c3aed22;
             color: #a78bfa;
@@ -360,6 +406,7 @@
                 <button class="fetch-btn" id="fetchMonthBtn" onclick="fetchCurrentMonth()">⬇ 拉取本月数据</button>
             </div>
             <div class="month-status" id="monthStatus"></div>
+            <div class="sector-filter" id="sectorFilter"></div>
             <div class="calendar-grid" id="calendarGrid"></div>
             <div class="detail-panel" id="detailPanel">
                 <div class="detail-header">

@@ -7,6 +7,7 @@ let monthsFetched = {};     // { "2026-06": "2026-05-31T10:00:00", ... }
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // 0-indexed
 let selectedDate = null;
+let activeSectors = new Set(); // empty = show all
 
 const WEEKDAYS_CN = ['日', '一', '二', '三', '四', '五', '六'];
 const MONTHS_CN = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
@@ -38,6 +39,11 @@ function sp500Badge(isSp500) {
     return `<span class="badge badge-sp500">S&P 500</span>`;
 }
 
+function sectorBadge(sector) {
+    if (!sector || sector === '—') return '';
+    return `<span class="badge badge-sector">${sector}</span>`;
+}
+
 // ── 月份状态提示 ─────────────────────────────────────────────────
 
 function updateMonthStatus() {
@@ -51,6 +57,60 @@ function updateMonthStatus() {
     }
 }
 
+// ── 板块过滤 ─────────────────────────────────────────────────────
+
+function getMonthSectors() {
+    const sectors = new Set();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = toDateStr(currentYear, currentMonth, d);
+        for (const e of (calendarData[dateStr] || [])) {
+            if (e.sector && e.sector !== '—') sectors.add(e.sector);
+        }
+    }
+    return [...sectors].sort();
+}
+
+function renderSectorFilter() {
+    const container = document.getElementById('sectorFilter');
+    const sectors = getMonthSectors();
+    if (sectors.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    const allActive = activeSectors.size === 0;
+    let html = `<span class="sector-filter-label">板块:</span>`;
+    html += `<span class="sector-pill all-pill ${allActive ? 'active' : ''}" onclick="toggleSectorAll()">全部</span>`;
+    for (const s of sectors) {
+        const active = activeSectors.has(s) ? 'active' : '';
+        html += `<span class="sector-pill ${active}" onclick="toggleSector('${s}')">${s}</span>`;
+    }
+    container.innerHTML = html;
+}
+
+function toggleSector(sector) {
+    if (activeSectors.has(sector)) {
+        activeSectors.delete(sector);
+    } else {
+        activeSectors.add(sector);
+    }
+    renderSectorFilter();
+    renderCalendarGrid();
+    if (selectedDate) showDetail(selectedDate, false);
+}
+
+function toggleSectorAll() {
+    activeSectors.clear();
+    renderSectorFilter();
+    renderCalendarGrid();
+    if (selectedDate) showDetail(selectedDate, false);
+}
+
+function filterBySector(entries) {
+    if (activeSectors.size === 0) return entries;
+    return entries.filter(e => activeSectors.has(e.sector));
+}
+
 // ── 日历渲染 ─────────────────────────────────────────────────────
 
 function renderCalendarGrid() {
@@ -58,6 +118,7 @@ function renderCalendarGrid() {
     const label = document.getElementById('monthLabel');
     label.textContent = `${currentYear}年 ${MONTHS_CN[currentMonth]}`;
     updateMonthStatus();
+    renderSectorFilter();
 
     const firstDay = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -81,7 +142,7 @@ function renderCalendarGrid() {
         const dayOfWeek = new Date(currentYear, currentMonth, d).getDay();
         const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
         const isToday = dateStr === todayStr;
-        const earnings = calendarData[dateStr] || [];
+        const earnings = filterBySector(calendarData[dateStr] || []);
         const hasEarnings = earnings.length > 0;
         const isSelected = dateStr === selectedDate;
 
@@ -121,12 +182,12 @@ function selectDate(dateStr) {
     showDetail(dateStr);
 }
 
-function showDetail(dateStr) {
+function showDetail(dateStr, scroll = true) {
     const panel = document.getElementById('detailPanel');
     const title = document.getElementById('detailTitle');
     const list = document.getElementById('detailList');
 
-    const earnings = calendarData[dateStr] || [];
+    const earnings = filterBySector(calendarData[dateStr] || []);
     if (earnings.length === 0) {
         panel.classList.remove('active');
         return;
@@ -138,9 +199,10 @@ function showDetail(dateStr) {
             <div class="ticker">${item.ticker}</div>
             <div class="info">
                 <div class="name" title="${item.name}">${item.name}</div>
-                <div class="meta">${item.sector && item.sector !== '—' ? item.sector + ' · ' : ''}市值 ${item.market_cap} · 分析师 ${item.num_estimates}人 · EPS预估 ${item.eps_forecast || '—'}</div>
+                <div class="meta">市值 ${item.market_cap} · 分析师 ${item.num_estimates}人 · EPS预估 ${item.eps_forecast || '—'}</div>
             </div>
             <div class="badges">
+                ${sectorBadge(item.sector)}
                 ${timingBadge(item.time, item.confirmed)}
                 ${sp500Badge(item.sp500)}
             </div>
@@ -148,7 +210,7 @@ function showDetail(dateStr) {
     `).join('');
 
     panel.classList.add('active');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (scroll) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function closeDetail() {
@@ -163,6 +225,7 @@ function prevMonth() {
     currentMonth--;
     if (currentMonth < 0) { currentMonth = 11; currentYear--; }
     selectedDate = null;
+    activeSectors.clear();
     document.getElementById('detailPanel').classList.remove('active');
     renderCalendarGrid();
 }
@@ -171,6 +234,7 @@ function nextMonth() {
     currentMonth++;
     if (currentMonth > 11) { currentMonth = 0; currentYear++; }
     selectedDate = null;
+    activeSectors.clear();
     document.getElementById('detailPanel').classList.remove('active');
     renderCalendarGrid();
 }

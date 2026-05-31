@@ -472,6 +472,7 @@
         "market_cap": "~609B",
         "market_cap_raw": 609141434928,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$1.07",
         "num_estimates": 5,
         "confirmed": false
@@ -484,6 +485,7 @@
         "market_cap": "~365B",
         "market_cap_raw": 364522132888,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$0.92",
         "num_estimates": 4,
         "confirmed": false
@@ -496,6 +498,7 @@
         "market_cap": "~232B",
         "market_cap_raw": 232215716587,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$4.27",
         "num_estimates": 7,
         "confirmed": false
@@ -508,6 +511,7 @@
         "market_cap": "~73B",
         "market_cap_raw": 73345352155,
         "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.95",
         "num_estimates": 9,
         "confirmed": false
@@ -520,6 +524,7 @@
         "market_cap": "~70B",
         "market_cap_raw": 70122077388,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$0.70",
         "num_estimates": 5,
         "confirmed": false
@@ -531,7 +536,8 @@
         "time": "未公布",
         "market_cap": "~68B",
         "market_cap_raw": 67981542867,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$6.33",
         "num_estimates": 9,
         "confirmed": false
@@ -544,6 +550,7 @@
         "market_cap": "~59B",
         "market_cap_raw": 59257705054,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$0.89",
         "num_estimates": 6,
         "confirmed": false
@@ -555,7 +562,8 @@
         "time": "未公布",
         "market_cap": "~42B",
         "market_cap_raw": 41560800876,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$1.32",
         "num_estimates": 7,
         "confirmed": false
@@ -567,7 +575,8 @@
         "time": "未公布",
         "market_cap": "~33B",
         "market_cap_raw": 32876303926,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.66",
         "num_estimates": 8,
         "confirmed": false
@@ -580,6 +589,7 @@
         "market_cap": "~27B",
         "market_cap_raw": 26662850921,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$0.94",
         "num_estimates": 4,
         "confirmed": false
@@ -592,6 +602,7 @@
         "market_cap": "~25B",
         "market_cap_raw": 25329676452,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "($0.36)",
         "num_estimates": 3,
         "confirmed": false
@@ -603,7 +614,8 @@
         "time": "未公布",
         "market_cap": "~23B",
         "market_cap_raw": 23132803863,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.93",
         "num_estimates": 9,
         "confirmed": false
@@ -615,7 +627,8 @@
         "time": "未公布",
         "market_cap": "~22B",
         "market_cap_raw": 22062339235,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$0.31",
         "num_estimates": 6,
         "confirmed": false
@@ -630,6 +643,7 @@
         "market_cap": "~344B",
         "market_cap_raw": 343630698783,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.22",
         "num_estimates": 9,
         "confirmed": false
@@ -642,6 +656,7 @@
         "market_cap": "~114B",
         "market_cap_raw": 113697212653,
         "sp500": true,
+        "sector": "Healthcare",
         "eps_forecast": "$3.69",
         "num_estimates": 8,
         "confirmed": false
@@ -654,6 +669,7 @@
         "market_cap": "~89B",
         "market_cap_raw": 89437863119,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$0.65",
         "num_estimates": 8,
         "confirmed": false
@@ -666,6 +682,7 @@
         "market_cap": "~55B",
         "market_cap_raw": 54614163480,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$3.55",
         "num_estimates": 9,
         "confirmed": false
@@ -678,6 +695,7 @@
         "market_cap": "~49B",
         "market_cap_raw": 48505857950,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.61",
         "num_estimates": 9,
         "confirmed": false
@@ -690,6 +708,7 @@
         "market_cap": "~26B",
         "market_cap_raw": 25867031784,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$2.08",
         "num_estimates": 5,
         "confirmed": false
@@ -702,6 +721,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 23932474833,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$3.42",
         "num_estimates": 3,
         "confirmed": false
@@ -713,7 +733,8 @@
         "time": "未公布",
         "market_cap": "~22B",
         "market_cap_raw": 21832022924,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.76",
         "num_estimates": 3,
         "confirmed": false
@@ -726,6 +747,7 @@
         "market_cap": "~20B",
         "market_cap_raw": 20182627415,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.20",
         "num_estimates": 4,
         "confirmed": false
@@ -740,6 +762,7 @@
         "market_cap": "~845B",
         "market_cap_raw": 844797885060,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$1.06",
         "num_estimates": 11,
         "confirmed": false
@@ -751,7 +774,8 @@
         "time": "未公布",
         "market_cap": "~196B",
         "market_cap_raw": 195516386615,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Telecommunications",
         "eps_forecast": "$0.72",
         "num_estimates": 7,
         "confirmed": false
@@ -763,7 +787,8 @@
         "time": "未公布",
         "market_cap": "~156B",
         "market_cap_raw": 156073302000,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.74",
         "num_estimates": 9,
         "confirmed": false
@@ -776,6 +801,7 @@
         "market_cap": "~149B",
         "market_cap_raw": 148983470578,
         "sp500": true,
+        "sector": "Healthcare",
         "eps_forecast": "$0.71",
         "num_estimates": 6,
         "confirmed": false
@@ -788,6 +814,7 @@
         "market_cap": "~148B",
         "market_cap_raw": 148265181582,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.22",
         "num_estimates": 12,
         "confirmed": false
@@ -800,6 +827,7 @@
         "market_cap": "~147B",
         "market_cap_raw": 147334455508,
         "sp500": false,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.90",
         "num_estimates": 4,
         "confirmed": false
@@ -812,6 +840,7 @@
         "market_cap": "~96B",
         "market_cap_raw": 96482827816,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.79",
         "num_estimates": 5,
         "confirmed": false
@@ -823,7 +852,8 @@
         "time": "未公布",
         "market_cap": "~92B",
         "market_cap_raw": 92270529322,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$5.60",
         "num_estimates": 6,
         "confirmed": false
@@ -835,7 +865,8 @@
         "time": "未公布",
         "market_cap": "~84B",
         "market_cap_raw": 84426992642,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$1.12",
         "num_estimates": 4,
         "confirmed": false
@@ -848,6 +879,7 @@
         "market_cap": "~79B",
         "market_cap_raw": 79416579000,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.54",
         "num_estimates": 7,
         "confirmed": false
@@ -859,7 +891,8 @@
         "time": "未公布",
         "market_cap": "~73B",
         "market_cap_raw": 73372434475,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$0.72",
         "num_estimates": 4,
         "confirmed": false
@@ -872,6 +905,7 @@
         "market_cap": "~72B",
         "market_cap_raw": 71681147567,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$3.07",
         "num_estimates": 9,
         "confirmed": false
@@ -883,7 +917,8 @@
         "time": "未公布",
         "market_cap": "~71B",
         "market_cap_raw": 70759338510,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$8.60",
         "num_estimates": 4,
         "confirmed": false
@@ -896,6 +931,7 @@
         "market_cap": "~70B",
         "market_cap_raw": 69514858888,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.55",
         "num_estimates": 6,
         "confirmed": false
@@ -907,7 +943,8 @@
         "time": "未公布",
         "market_cap": "~67B",
         "market_cap_raw": 66956236000,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Telecommunications",
         "eps_forecast": "$1.81",
         "num_estimates": 6,
         "confirmed": false
@@ -920,6 +957,7 @@
         "market_cap": "~67B",
         "market_cap_raw": 66827313159,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$0.38",
         "num_estimates": 5,
         "confirmed": false
@@ -932,6 +970,7 @@
         "market_cap": "~60B",
         "market_cap_raw": 59850510061,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.32",
         "num_estimates": 8,
         "confirmed": false
@@ -944,6 +983,7 @@
         "market_cap": "~57B",
         "market_cap_raw": 57012461061,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$0.65",
         "num_estimates": 6,
         "confirmed": false
@@ -956,6 +996,7 @@
         "market_cap": "~56B",
         "market_cap_raw": 56307574067,
         "sp500": false,
+        "sector": "Energy",
         "eps_forecast": "$1.05",
         "num_estimates": 5,
         "confirmed": false
@@ -968,6 +1009,7 @@
         "market_cap": "~54B",
         "market_cap_raw": 53906892000,
         "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$1.18",
         "num_estimates": 6,
         "confirmed": false
@@ -980,6 +1022,7 @@
         "market_cap": "~53B",
         "market_cap_raw": 53069842147,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.78",
         "num_estimates": 4,
         "confirmed": false
@@ -991,7 +1034,8 @@
         "time": "未公布",
         "market_cap": "~51B",
         "market_cap_raw": 50607393824,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$2.89",
         "num_estimates": 9,
         "confirmed": false
@@ -1003,7 +1047,8 @@
         "time": "未公布",
         "market_cap": "~50B",
         "market_cap_raw": 50438661007,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.66",
         "num_estimates": 8,
         "confirmed": false
@@ -1016,6 +1061,7 @@
         "market_cap": "~48B",
         "market_cap_raw": 48024318653,
         "sp500": false,
+        "sector": "Basic Materials",
         "eps_forecast": "$0.29",
         "num_estimates": 4,
         "confirmed": false
@@ -1028,6 +1074,7 @@
         "market_cap": "~45B",
         "market_cap_raw": 44863923351,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.27",
         "num_estimates": 7,
         "confirmed": false
@@ -1040,6 +1087,7 @@
         "market_cap": "~45B",
         "market_cap_raw": 44807908786,
         "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$3.42",
         "num_estimates": 7,
         "confirmed": false
@@ -1052,6 +1100,7 @@
         "market_cap": "~44B",
         "market_cap_raw": 44289203801,
         "sp500": false,
+        "sector": "Miscellaneous",
         "eps_forecast": "$2.14",
         "num_estimates": 3,
         "confirmed": false
@@ -1063,7 +1112,8 @@
         "time": "未公布",
         "market_cap": "~39B",
         "market_cap_raw": 39442138968,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.47",
         "num_estimates": 5,
         "confirmed": false
@@ -1075,7 +1125,8 @@
         "time": "未公布",
         "market_cap": "~39B",
         "market_cap_raw": 39343426267,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "($0.27)",
         "num_estimates": 7,
         "confirmed": false
@@ -1087,7 +1138,8 @@
         "time": "未公布",
         "market_cap": "~39B",
         "market_cap_raw": 39218410219,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.27",
         "num_estimates": 11,
         "confirmed": false
@@ -1099,7 +1151,8 @@
         "time": "未公布",
         "market_cap": "~39B",
         "market_cap_raw": 38575800421,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.66",
         "num_estimates": 3,
         "confirmed": false
@@ -1112,6 +1165,7 @@
         "market_cap": "~37B",
         "market_cap_raw": 36718169411,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.21",
         "num_estimates": 3,
         "confirmed": false
@@ -1123,7 +1177,8 @@
         "time": "未公布",
         "market_cap": "~36B",
         "market_cap_raw": 36373786462,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$2.33",
         "num_estimates": 3,
         "confirmed": false
@@ -1135,7 +1190,8 @@
         "time": "未公布",
         "market_cap": "~36B",
         "market_cap_raw": 36001807453,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$2.31",
         "num_estimates": 8,
         "confirmed": false
@@ -1147,7 +1203,8 @@
         "time": "未公布",
         "market_cap": "~35B",
         "market_cap_raw": 34911670000,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$3.24",
         "num_estimates": 8,
         "confirmed": false
@@ -1160,6 +1217,7 @@
         "market_cap": "~33B",
         "market_cap_raw": 32810302000,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$0.80",
         "num_estimates": 5,
         "confirmed": false
@@ -1172,6 +1230,7 @@
         "market_cap": "~30B",
         "market_cap_raw": 30223921000,
         "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$2.51",
         "num_estimates": 6,
         "confirmed": false
@@ -1183,7 +1242,8 @@
         "time": "未公布",
         "market_cap": "~30B",
         "market_cap_raw": 30146553531,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.17",
         "num_estimates": 4,
         "confirmed": false
@@ -1195,7 +1255,8 @@
         "time": "未公布",
         "market_cap": "~30B",
         "market_cap_raw": 29771570038,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.57",
         "num_estimates": 10,
         "confirmed": false
@@ -1208,6 +1269,7 @@
         "market_cap": "~27B",
         "market_cap_raw": 27412388343,
         "sp500": true,
+        "sector": "Energy",
         "eps_forecast": "$1",
         "num_estimates": 9,
         "confirmed": false
@@ -1220,6 +1282,7 @@
         "market_cap": "~25B",
         "market_cap_raw": 24838583307,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.55",
         "num_estimates": 6,
         "confirmed": false
@@ -1232,6 +1295,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 23483839770,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "($2.52)",
         "num_estimates": 5,
         "confirmed": false
@@ -1244,6 +1308,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 23182548414,
         "sp500": false,
+        "sector": "Basic Materials",
         "eps_forecast": "$1.06",
         "num_estimates": 8,
         "confirmed": false
@@ -1255,7 +1320,8 @@
         "time": "未公布",
         "market_cap": "~21B",
         "market_cap_raw": 20790558502,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.33",
         "num_estimates": 6,
         "confirmed": false
@@ -1268,6 +1334,7 @@
         "market_cap": "~20B",
         "market_cap_raw": 20069639361,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$0.38",
         "num_estimates": 4,
         "confirmed": false
@@ -1282,6 +1349,7 @@
         "market_cap": "~357B",
         "market_cap_raw": 356745804338,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.38",
         "num_estimates": 4,
         "confirmed": false
@@ -1294,6 +1362,7 @@
         "market_cap": "~203B",
         "market_cap_raw": 203202150000,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$0.87",
         "num_estimates": 5,
         "confirmed": false
@@ -1305,7 +1374,8 @@
         "time": "未公布",
         "market_cap": "~202B",
         "market_cap_raw": 201527046600,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$3.40",
         "num_estimates": 7,
         "confirmed": false
@@ -1318,6 +1388,7 @@
         "market_cap": "~180B",
         "market_cap_raw": 180128330012,
         "sp500": true,
+        "sector": "Communication Services",
         "eps_forecast": "$1.49",
         "num_estimates": 8,
         "confirmed": false
@@ -1330,6 +1401,7 @@
         "market_cap": "~144B",
         "market_cap_raw": 144364682002,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.70",
         "num_estimates": 10,
         "confirmed": false
@@ -1341,7 +1413,8 @@
         "time": "未公布",
         "market_cap": "~119B",
         "market_cap_raw": 118622961732,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$2.21",
         "num_estimates": 10,
         "confirmed": false
@@ -1354,6 +1427,7 @@
         "market_cap": "~102B",
         "market_cap_raw": 101720523208,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$2.58",
         "num_estimates": 6,
         "confirmed": false
@@ -1366,6 +1440,7 @@
         "market_cap": "~95B",
         "market_cap_raw": 95024496313,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.53",
         "num_estimates": 12,
         "confirmed": false
@@ -1378,6 +1453,7 @@
         "market_cap": "~87B",
         "market_cap_raw": 86889013296,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.22",
         "num_estimates": 3,
         "confirmed": false
@@ -1389,7 +1465,8 @@
         "time": "未公布",
         "market_cap": "~83B",
         "market_cap_raw": 83067239348,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.12",
         "num_estimates": 6,
         "confirmed": false
@@ -1401,7 +1478,8 @@
         "time": "未公布",
         "market_cap": "~74B",
         "market_cap_raw": 73746242051,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$1.23",
         "num_estimates": 8,
         "confirmed": false
@@ -1413,7 +1491,8 @@
         "time": "未公布",
         "market_cap": "~74B",
         "market_cap_raw": 73511748083,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$1.85",
         "num_estimates": 9,
         "confirmed": false
@@ -1425,7 +1504,8 @@
         "time": "未公布",
         "market_cap": "~68B",
         "market_cap_raw": 68277123737,
-        "sp500": false,
+        "sp500": true,
+        "sector": "—",
         "eps_forecast": "$0.37",
         "num_estimates": 10,
         "confirmed": false
@@ -1437,7 +1517,8 @@
         "time": "未公布",
         "market_cap": "~68B",
         "market_cap_raw": 67792976422,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "($0.10)",
         "num_estimates": 6,
         "confirmed": false
@@ -1450,6 +1531,7 @@
         "market_cap": "~58B",
         "market_cap_raw": 57525464176,
         "sp500": true,
+        "sector": "Real Estate",
         "eps_forecast": "$1.10",
         "num_estimates": 6,
         "confirmed": false
@@ -1462,6 +1544,7 @@
         "market_cap": "~53B",
         "market_cap_raw": 52736078407,
         "sp500": true,
+        "sector": "Finance",
         "eps_forecast": "$2.25",
         "num_estimates": 8,
         "confirmed": false
@@ -1473,7 +1556,8 @@
         "time": "未公布",
         "market_cap": "~52B",
         "market_cap_raw": 52085941373,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$4.80",
         "num_estimates": 7,
         "confirmed": false
@@ -1486,6 +1570,7 @@
         "market_cap": "~48B",
         "market_cap_raw": 48343724435,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$0.29",
         "num_estimates": 8,
         "confirmed": false
@@ -1498,6 +1583,7 @@
         "market_cap": "~47B",
         "market_cap_raw": 46637827112,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$0.89",
         "num_estimates": 3,
         "confirmed": false
@@ -1510,6 +1596,7 @@
         "market_cap": "~40B",
         "market_cap_raw": 39683978051,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$1.35",
         "num_estimates": 3,
         "confirmed": false
@@ -1521,7 +1608,8 @@
         "time": "未公布",
         "market_cap": "~38B",
         "market_cap_raw": 38328465796,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.91",
         "num_estimates": 4,
         "confirmed": false
@@ -1534,6 +1622,7 @@
         "market_cap": "~37B",
         "market_cap_raw": 37231082339,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.12",
         "num_estimates": 3,
         "confirmed": false
@@ -1545,7 +1634,8 @@
         "time": "未公布",
         "market_cap": "~35B",
         "market_cap_raw": 35410104468,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$0.03",
         "num_estimates": 7,
         "confirmed": false
@@ -1558,6 +1648,7 @@
         "market_cap": "~34B",
         "market_cap_raw": 33910394593,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.82",
         "num_estimates": 9,
         "confirmed": false
@@ -1570,6 +1661,7 @@
         "market_cap": "~33B",
         "market_cap_raw": 33443806939,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$0.39",
         "num_estimates": 5,
         "confirmed": false
@@ -1582,6 +1674,7 @@
         "market_cap": "~33B",
         "market_cap_raw": 32873790919,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "($1.83)",
         "num_estimates": 10,
         "confirmed": false
@@ -1594,6 +1687,7 @@
         "market_cap": "~32B",
         "market_cap_raw": 32154487925,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$0.87",
         "num_estimates": 6,
         "confirmed": false
@@ -1606,6 +1700,7 @@
         "market_cap": "~31B",
         "market_cap_raw": 31371338474,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$1.22",
         "num_estimates": 3,
         "confirmed": false
@@ -1618,6 +1713,7 @@
         "market_cap": "~29B",
         "market_cap_raw": 29418119640,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$0.07",
         "num_estimates": 4,
         "confirmed": false
@@ -1630,6 +1726,7 @@
         "market_cap": "~29B",
         "market_cap_raw": 29015978802,
         "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.50",
         "num_estimates": 9,
         "confirmed": false
@@ -1641,7 +1738,8 @@
         "time": "未公布",
         "market_cap": "~29B",
         "market_cap_raw": 28882136801,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$3.37",
         "num_estimates": 3,
         "confirmed": false
@@ -1654,6 +1752,7 @@
         "market_cap": "~28B",
         "market_cap_raw": 27622016558,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$3.32",
         "num_estimates": 4,
         "confirmed": false
@@ -1665,7 +1764,8 @@
         "time": "未公布",
         "market_cap": "~26B",
         "market_cap_raw": 25983368927,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.59",
         "num_estimates": 5,
         "confirmed": false
@@ -1678,6 +1778,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 23858884152,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$6.73",
         "num_estimates": 7,
         "confirmed": false
@@ -1689,7 +1790,8 @@
         "time": "未公布",
         "market_cap": "~22B",
         "market_cap_raw": 22318434891,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.06",
         "num_estimates": 4,
         "confirmed": false
@@ -1702,6 +1804,7 @@
         "market_cap": "~22B",
         "market_cap_raw": 21844446760,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$2",
         "num_estimates": 6,
         "confirmed": false
@@ -1713,7 +1816,8 @@
         "time": "未公布",
         "market_cap": "~21B",
         "market_cap_raw": 20794237664,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.24",
         "num_estimates": 6,
         "confirmed": false
@@ -1725,7 +1829,8 @@
         "time": "未公布",
         "market_cap": "~20B",
         "market_cap_raw": 20228542343,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$2.82",
         "num_estimates": 10,
         "confirmed": false
@@ -1740,6 +1845,7 @@
         "market_cap": "~243B",
         "market_cap_raw": 243255381035,
         "sp500": false,
+        "sector": "Energy",
         "eps_forecast": "$1.78",
         "num_estimates": 3,
         "confirmed": false
@@ -1752,6 +1858,7 @@
         "market_cap": "~197B",
         "market_cap_raw": 197499313626,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$2.74",
         "num_estimates": 10,
         "confirmed": false
@@ -1764,6 +1871,7 @@
         "market_cap": "~169B",
         "market_cap_raw": 169126648236,
         "sp500": true,
+        "sector": "Healthcare",
         "eps_forecast": "$1.89",
         "num_estimates": 9,
         "confirmed": false
@@ -1775,7 +1883,8 @@
         "time": "未公布",
         "market_cap": "~104B",
         "market_cap_raw": 103983933757,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.11",
         "num_estimates": 5,
         "confirmed": false
@@ -1787,7 +1896,8 @@
         "time": "未公布",
         "market_cap": "~91B",
         "market_cap_raw": 90992062526,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$11.56",
         "num_estimates": 7,
         "confirmed": false
@@ -1800,6 +1910,7 @@
         "market_cap": "~86B",
         "market_cap_raw": 86054933599,
         "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.53",
         "num_estimates": 9,
         "confirmed": false
@@ -1812,6 +1923,7 @@
         "market_cap": "~86B",
         "market_cap_raw": 85689752324,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "($0.07)",
         "num_estimates": 3,
         "confirmed": false
@@ -1824,6 +1936,7 @@
         "market_cap": "~81B",
         "market_cap_raw": 81063812144,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.31",
         "num_estimates": 9,
         "confirmed": false
@@ -1836,6 +1949,7 @@
         "market_cap": "~81B",
         "market_cap_raw": 80629185603,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.06)",
         "num_estimates": 8,
         "confirmed": false
@@ -1847,7 +1961,8 @@
         "time": "未公布",
         "market_cap": "~80B",
         "market_cap_raw": 80176472970,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.06",
         "num_estimates": 10,
         "confirmed": false
@@ -1859,7 +1974,8 @@
         "time": "未公布",
         "market_cap": "~68B",
         "market_cap_raw": 68313821816,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.88",
         "num_estimates": 5,
         "confirmed": false
@@ -1871,7 +1987,8 @@
         "time": "未公布",
         "market_cap": "~63B",
         "market_cap_raw": 62668097881,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.64",
         "num_estimates": 10,
         "confirmed": false
@@ -1884,6 +2001,7 @@
         "market_cap": "~59B",
         "market_cap_raw": 58894116772,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$10.20",
         "num_estimates": 8,
         "confirmed": false
@@ -1896,6 +2014,7 @@
         "market_cap": "~59B",
         "market_cap_raw": 58868087143,
         "sp500": false,
+        "sector": "Basic Materials",
         "eps_forecast": "$1.15",
         "num_estimates": 9,
         "confirmed": false
@@ -1908,6 +2027,7 @@
         "market_cap": "~59B",
         "market_cap_raw": 58853277312,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$1.51",
         "num_estimates": 4,
         "confirmed": false
@@ -1920,6 +2040,7 @@
         "market_cap": "~58B",
         "market_cap_raw": 58299647174,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($1.17)",
         "num_estimates": 4,
         "confirmed": false
@@ -1931,7 +2052,8 @@
         "time": "未公布",
         "market_cap": "~56B",
         "market_cap_raw": 56264606293,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$2.55",
         "num_estimates": 7,
         "confirmed": false
@@ -1944,6 +2066,7 @@
         "market_cap": "~52B",
         "market_cap_raw": 52061294147,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.39",
         "num_estimates": 7,
         "confirmed": false
@@ -1956,6 +2079,7 @@
         "market_cap": "~52B",
         "market_cap_raw": 52039110959,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "$5.16",
         "num_estimates": 11,
         "confirmed": false
@@ -1968,6 +2092,7 @@
         "market_cap": "~48B",
         "market_cap_raw": 48106822337,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$3.91",
         "num_estimates": 7,
         "confirmed": false
@@ -1980,6 +2105,7 @@
         "market_cap": "~48B",
         "market_cap_raw": 48006675527,
         "sp500": true,
+        "sector": "Financial",
         "eps_forecast": "$0.36",
         "num_estimates": 10,
         "confirmed": false
@@ -1991,7 +2117,8 @@
         "time": "未公布",
         "market_cap": "~44B",
         "market_cap_raw": 44251707350,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.30",
         "num_estimates": 8,
         "confirmed": false
@@ -2004,6 +2131,7 @@
         "market_cap": "~41B",
         "market_cap_raw": 40892954771,
         "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$2.77",
         "num_estimates": 7,
         "confirmed": false
@@ -2016,6 +2144,7 @@
         "market_cap": "~41B",
         "market_cap_raw": 40743787997,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.10",
         "num_estimates": 5,
         "confirmed": false
@@ -2028,6 +2157,7 @@
         "market_cap": "~39B",
         "market_cap_raw": 39174707642,
         "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$2.32",
         "num_estimates": 5,
         "confirmed": false
@@ -2039,7 +2169,8 @@
         "time": "未公布",
         "market_cap": "~34B",
         "market_cap_raw": 33868952904,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.27",
         "num_estimates": 4,
         "confirmed": false
@@ -2052,6 +2183,7 @@
         "market_cap": "~33B",
         "market_cap_raw": 32812984796,
         "sp500": true,
+        "sector": "Health Care",
         "eps_forecast": "$1.61",
         "num_estimates": 10,
         "confirmed": false
@@ -2064,6 +2196,7 @@
         "market_cap": "~31B",
         "market_cap_raw": 30639498825,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "($0.53)",
         "num_estimates": 5,
         "confirmed": false
@@ -2076,6 +2209,7 @@
         "market_cap": "~30B",
         "market_cap_raw": 29838514254,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.76",
         "num_estimates": 6,
         "confirmed": false
@@ -2088,6 +2222,7 @@
         "market_cap": "~29B",
         "market_cap_raw": 29464374467,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$1.07",
         "num_estimates": 6,
         "confirmed": false
@@ -2099,7 +2234,8 @@
         "time": "未公布",
         "market_cap": "~29B",
         "market_cap_raw": 29375280968,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.31",
         "num_estimates": 5,
         "confirmed": false
@@ -2112,6 +2248,7 @@
         "market_cap": "~27B",
         "market_cap_raw": 27339869908,
         "sp500": false,
+        "sector": "Energy",
         "eps_forecast": "$0.52",
         "num_estimates": 3,
         "confirmed": false
@@ -2123,7 +2260,8 @@
         "time": "未公布",
         "market_cap": "~27B",
         "market_cap_raw": 27311023621,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.73",
         "num_estimates": 6,
         "confirmed": false
@@ -2136,6 +2274,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 24447595245,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.17",
         "num_estimates": 7,
         "confirmed": false
@@ -2148,6 +2287,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 23511543764,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$8.70",
         "num_estimates": 4,
         "confirmed": false
@@ -2160,6 +2300,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 23489463115,
         "sp500": false,
+        "sector": "Health Care",
         "eps_forecast": "($0.90)",
         "num_estimates": 9,
         "confirmed": false
@@ -2172,6 +2313,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 23136758563,
         "sp500": false,
+        "sector": "Telecommunications",
         "eps_forecast": "$0.42",
         "num_estimates": 7,
         "confirmed": false
@@ -2183,7 +2325,8 @@
         "time": "未公布",
         "market_cap": "~23B",
         "market_cap_raw": 23031579398,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$5.12",
         "num_estimates": 6,
         "confirmed": false
@@ -2196,6 +2339,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 22890104070,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.18)",
         "num_estimates": 3,
         "confirmed": false
@@ -2208,6 +2352,7 @@
         "market_cap": "~21B",
         "market_cap_raw": 20950637189,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "($0.06)",
         "num_estimates": 5,
         "confirmed": false
@@ -2219,7 +2364,8 @@
         "time": "未公布",
         "market_cap": "~21B",
         "market_cap_raw": 20809019602,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.96",
         "num_estimates": 8,
         "confirmed": false
@@ -2234,6 +2380,7 @@
         "market_cap": "~121B",
         "market_cap_raw": 120782200858,
         "sp500": false,
+        "sector": "Energy",
         "eps_forecast": "$0.69",
         "num_estimates": 5,
         "confirmed": false
@@ -2246,6 +2393,7 @@
         "market_cap": "~80B",
         "market_cap_raw": 79976884000,
         "sp500": false,
+        "sector": "—",
         "eps_forecast": "$0.39",
         "num_estimates": 5,
         "confirmed": false
@@ -2257,7 +2405,8 @@
         "time": "未公布",
         "market_cap": "~54B",
         "market_cap_raw": 54043605971,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$2.21",
         "num_estimates": 5,
         "confirmed": false
@@ -2269,7 +2418,8 @@
         "time": "未公布",
         "market_cap": "~27B",
         "market_cap_raw": 26580538289,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$0.61",
         "num_estimates": 6,
         "confirmed": false
@@ -2281,7 +2431,8 @@
         "time": "未公布",
         "market_cap": "~22B",
         "market_cap_raw": 21822637755,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.28",
         "num_estimates": 7,
         "confirmed": false
@@ -2296,6 +2447,7 @@
         "market_cap": "~121B",
         "market_cap_raw": 121347418954,
         "sp500": false,
+        "sector": "Energy",
         "eps_forecast": "$1.02",
         "num_estimates": 3,
         "confirmed": false
@@ -2307,7 +2459,8 @@
         "time": "未公布",
         "market_cap": "~103B",
         "market_cap_raw": 103412326938,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Utilities",
         "eps_forecast": "$2.56",
         "num_estimates": 4,
         "confirmed": false
@@ -2320,6 +2473,7 @@
         "market_cap": "~70B",
         "market_cap_raw": 69647709154,
         "sp500": false,
+        "sector": "Basic Materials",
         "eps_forecast": "$0.74",
         "num_estimates": 6,
         "confirmed": false
@@ -2332,6 +2486,7 @@
         "market_cap": "~67B",
         "market_cap_raw": 67053425104,
         "sp500": true,
+        "sector": "Real Estate",
         "eps_forecast": "$2.98",
         "num_estimates": 6,
         "confirmed": false
@@ -2344,6 +2499,7 @@
         "market_cap": "~52B",
         "market_cap_raw": 51655499287,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "($0.23)",
         "num_estimates": 6,
         "confirmed": false
@@ -2356,6 +2512,7 @@
         "market_cap": "~43B",
         "market_cap_raw": 42597432672,
         "sp500": false,
+        "sector": "Telecommunications",
         "eps_forecast": "$0.17",
         "num_estimates": 3,
         "confirmed": false
@@ -2367,7 +2524,8 @@
         "time": "未公布",
         "market_cap": "~38B",
         "market_cap_raw": 37985853872,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "($0.87)",
         "num_estimates": 3,
         "confirmed": false
@@ -2380,6 +2538,7 @@
         "market_cap": "~27B",
         "market_cap_raw": 26905869487,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.15",
         "num_estimates": 7,
         "confirmed": false
@@ -2391,7 +2550,8 @@
         "time": "未公布",
         "market_cap": "~25B",
         "market_cap_raw": 24887635437,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.02",
         "num_estimates": 7,
         "confirmed": false
@@ -2403,7 +2563,8 @@
         "time": "未公布",
         "market_cap": "~25B",
         "market_cap_raw": 24887635437,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.02",
         "num_estimates": 7,
         "confirmed": false
@@ -2418,6 +2579,7 @@
         "market_cap": "~43B",
         "market_cap_raw": 43354172335,
         "sp500": false,
+        "sector": "Basic Materials",
         "eps_forecast": "$2.09",
         "num_estimates": 3,
         "confirmed": false
@@ -2429,7 +2591,8 @@
         "time": "未公布",
         "market_cap": "~33B",
         "market_cap_raw": 33276560345,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.92",
         "num_estimates": 3,
         "confirmed": false
@@ -2442,6 +2605,7 @@
         "market_cap": "~31B",
         "market_cap_raw": 31153849696,
         "sp500": false,
+        "sector": "Utilities",
         "eps_forecast": "$0.13",
         "num_estimates": 7,
         "confirmed": false
@@ -2454,6 +2618,7 @@
         "market_cap": "~25B",
         "market_cap_raw": 25365072562,
         "sp500": false,
+        "sector": "—",
         "eps_forecast": "$0.29",
         "num_estimates": 5,
         "confirmed": false
@@ -2466,6 +2631,7 @@
         "market_cap": "~21B",
         "market_cap_raw": 20613149324,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$0.72",
         "num_estimates": 6,
         "confirmed": false
@@ -2480,6 +2646,7 @@
         "market_cap": "~468B",
         "market_cap_raw": 467611808656,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.86",
         "num_estimates": 6,
         "confirmed": false
@@ -2492,6 +2659,7 @@
         "market_cap": "~294B",
         "market_cap_raw": 294424136031,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.02",
         "num_estimates": 3,
         "confirmed": false
@@ -2504,6 +2672,7 @@
         "market_cap": "~57B",
         "market_cap_raw": 57467317230,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.81)",
         "num_estimates": 5,
         "confirmed": false
@@ -2516,6 +2685,7 @@
         "market_cap": "~31B",
         "market_cap_raw": 31083272072,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.49",
         "num_estimates": 4,
         "confirmed": false
@@ -2530,6 +2700,7 @@
         "market_cap": "~357B",
         "market_cap_raw": 357027676482,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.68",
         "num_estimates": 10,
         "confirmed": false
@@ -2542,6 +2713,7 @@
         "market_cap": "~112B",
         "market_cap_raw": 112494014644,
         "sp500": false,
+        "sector": "Real Estate",
         "eps_forecast": "$0.64",
         "num_estimates": 3,
         "confirmed": false
@@ -2554,6 +2726,7 @@
         "market_cap": "~63B",
         "market_cap_raw": 63366540898,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$0.20",
         "num_estimates": 4,
         "confirmed": false
@@ -2566,6 +2739,7 @@
         "market_cap": "~41B",
         "market_cap_raw": 41163882841,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "($0.12)",
         "num_estimates": 4,
         "confirmed": false
@@ -2578,6 +2752,7 @@
         "market_cap": "~32B",
         "market_cap_raw": 32231561256,
         "sp500": false,
+        "sector": "—",
         "eps_forecast": "$7.06",
         "num_estimates": 3,
         "confirmed": false
@@ -2592,6 +2767,7 @@
         "market_cap": "~320B",
         "market_cap_raw": 320283849425,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$3.40",
         "num_estimates": 13,
         "confirmed": false
@@ -2604,6 +2780,7 @@
         "market_cap": "~20B",
         "market_cap_raw": 20098332627,
         "sp500": false,
+        "sector": "—",
         "eps_forecast": "$0.31",
         "num_estimates": 5,
         "confirmed": false
@@ -2618,6 +2795,7 @@
         "market_cap": "~5.2T",
         "market_cap_raw": 5184850000000,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$1.70",
         "num_estimates": 13,
         "confirmed": false
@@ -2630,6 +2808,7 @@
         "market_cap": "~204B",
         "market_cap_raw": 204094340630,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.89",
         "num_estimates": 8,
         "confirmed": false
@@ -2642,6 +2821,7 @@
         "market_cap": "~171B",
         "market_cap_raw": 171279571196,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.01",
         "num_estimates": 6,
         "confirmed": false
@@ -2654,6 +2834,7 @@
         "market_cap": "~122B",
         "market_cap_raw": 122049022448,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$2.96",
         "num_estimates": 13,
         "confirmed": false
@@ -2666,6 +2847,7 @@
         "market_cap": "~86B",
         "market_cap_raw": 85617081000,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$11.13",
         "num_estimates": 7,
         "confirmed": false
@@ -2678,6 +2860,7 @@
         "market_cap": "~58B",
         "market_cap_raw": 58429774177,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.41",
         "num_estimates": 14,
         "confirmed": false
@@ -2692,6 +2875,7 @@
         "market_cap": "~948B",
         "market_cap_raw": 947918657369,
         "sp500": true,
+        "sector": "Consumer Staples",
         "eps_forecast": "$0.65",
         "num_estimates": 13,
         "confirmed": false
@@ -2704,6 +2888,7 @@
         "market_cap": "~146B",
         "market_cap_raw": 145587824998,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$5.81",
         "num_estimates": 10,
         "confirmed": false
@@ -2716,6 +2901,7 @@
         "market_cap": "~73B",
         "market_cap_raw": 73192059226,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.70",
         "num_estimates": 6,
         "confirmed": false
@@ -2727,7 +2913,8 @@
         "time": "未公布",
         "market_cap": "~40B",
         "market_cap_raw": 40451195868,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.19",
         "num_estimates": 8,
         "confirmed": false
@@ -2740,6 +2927,7 @@
         "market_cap": "~32B",
         "market_cap_raw": 32112470000,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$1.17",
         "num_estimates": 11,
         "confirmed": false
@@ -2752,6 +2940,7 @@
         "market_cap": "~32B",
         "market_cap_raw": 32058903153,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$0.41",
         "num_estimates": 3,
         "confirmed": false
@@ -2764,6 +2953,7 @@
         "market_cap": "~29B",
         "market_cap_raw": 29458108620,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.93",
         "num_estimates": 8,
         "confirmed": false
@@ -2775,7 +2965,8 @@
         "time": "未公布",
         "market_cap": "~24B",
         "market_cap_raw": 24208703222,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.80",
         "num_estimates": 7,
         "confirmed": false
@@ -2787,7 +2978,8 @@
         "time": "未公布",
         "market_cap": "~22B",
         "market_cap_raw": 22066875606,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$2.52",
         "num_estimates": 6,
         "confirmed": false
@@ -2802,6 +2994,7 @@
         "market_cap": "~50B",
         "market_cap_raw": 49547115886,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$36.18",
         "num_estimates": 11,
         "confirmed": false
@@ -2814,6 +3007,7 @@
         "market_cap": "~42B",
         "market_cap_raw": 41515268864,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$3.44",
         "num_estimates": 3,
         "confirmed": false
@@ -2826,6 +3020,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 24007857762,
         "sp500": false,
+        "sector": "—",
         "eps_forecast": "$1.78",
         "num_estimates": 3,
         "confirmed": false
@@ -2838,6 +3033,7 @@
         "market_cap": "~21B",
         "market_cap_raw": 21028706631,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.04)",
         "num_estimates": 12,
         "confirmed": false
@@ -2852,6 +3048,7 @@
         "market_cap": "~179B",
         "market_cap_raw": 179339556426,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.61",
         "num_estimates": 12,
         "confirmed": false
@@ -2864,6 +3061,7 @@
         "market_cap": "~163B",
         "market_cap_raw": 162604910000,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.30",
         "num_estimates": 13,
         "confirmed": false
@@ -2876,6 +3074,7 @@
         "market_cap": "~114B",
         "market_cap_raw": 113603886526,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$2.80",
         "num_estimates": 3,
         "confirmed": false
@@ -2888,6 +3087,7 @@
         "market_cap": "~98B",
         "market_cap_raw": 97986219836,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$1.46",
         "num_estimates": 3,
         "confirmed": false
@@ -2900,6 +3100,7 @@
         "market_cap": "~92B",
         "market_cap_raw": 92032622768,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.24",
         "num_estimates": 7,
         "confirmed": false
@@ -2912,6 +3113,7 @@
         "market_cap": "~83B",
         "market_cap_raw": 82907026894,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.59)",
         "num_estimates": 12,
         "confirmed": false
@@ -2924,6 +3126,7 @@
         "market_cap": "~48B",
         "market_cap_raw": 48143613943,
         "sp500": false,
+        "sector": "Industrials",
         "eps_forecast": "$1.33",
         "num_estimates": 8,
         "confirmed": false
@@ -2936,6 +3139,7 @@
         "market_cap": "~38B",
         "market_cap_raw": 38258701675,
         "sp500": true,
+        "sector": "Industrials",
         "eps_forecast": "$1.40",
         "num_estimates": 7,
         "confirmed": false
@@ -2948,6 +3152,7 @@
         "market_cap": "~24B",
         "market_cap_raw": 24260426196,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "$0.01",
         "num_estimates": 8,
         "confirmed": false
@@ -2960,6 +3165,7 @@
         "market_cap": "~23B",
         "market_cap_raw": 22953799149,
         "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$0.72",
         "num_estimates": 5,
         "confirmed": false
@@ -2972,6 +3178,7 @@
         "market_cap": "~20B",
         "market_cap_raw": 20243180785,
         "sp500": false,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$2.91",
         "num_estimates": 8,
         "confirmed": false
@@ -2986,6 +3193,7 @@
         "market_cap": "~263B",
         "market_cap_raw": 263029322613,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$2.81",
         "num_estimates": 4,
         "confirmed": false
@@ -2997,7 +3205,8 @@
         "time": "未公布",
         "market_cap": "~206B",
         "market_cap_raw": 205945625393,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.79",
         "num_estimates": 5,
         "confirmed": false
@@ -3010,6 +3219,7 @@
         "market_cap": "~188B",
         "market_cap_raw": 188257523986,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$1.63",
         "num_estimates": 3,
         "confirmed": false
@@ -3022,6 +3232,7 @@
         "market_cap": "~100B",
         "market_cap_raw": 100372967391,
         "sp500": false,
+        "sector": "Finance",
         "eps_forecast": "$1.78",
         "num_estimates": 3,
         "confirmed": false
@@ -3033,7 +3244,8 @@
         "time": "未公布",
         "market_cap": "~51B",
         "market_cap_raw": 50875448228,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$2.12",
         "num_estimates": 7,
         "confirmed": false
@@ -3045,7 +3257,8 @@
         "time": "未公布",
         "market_cap": "~28B",
         "market_cap_raw": 28099848960,
-        "sp500": false,
+        "sp500": true,
+        "sector": "Technology",
         "eps_forecast": "$1.88",
         "num_estimates": 8,
         "confirmed": false
@@ -3058,6 +3271,7 @@
         "market_cap": "~26B",
         "market_cap_raw": 26217218505,
         "sp500": false,
+        "sector": "Technology",
         "eps_forecast": "($0.30)",
         "num_estimates": 11,
         "confirmed": false
@@ -3070,6 +3284,7 @@
         "market_cap": "~22B",
         "market_cap_raw": 22003970878,
         "sp500": true,
+        "sector": "Consumer Discretionary",
         "eps_forecast": "$1.53",
         "num_estimates": 10,
         "confirmed": false
@@ -4489,7 +4704,7 @@
   },
   "months_fetched": {
     "2026-06": "2026-05-31T07:38:36.064852",
-    "2026-05": "2026-05-31T07:47:34.902676",
+    "2026-05": "2026-05-31T08:43:50.839578",
     "2026-07": "2026-05-31T08:04:52.053656"
   }
 }
