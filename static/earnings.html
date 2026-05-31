@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>财报日历 - Stock Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: #71767b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #1d9bf0; }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-row h1 { margin: 0; }
+
+        .last-updated {
+            color: #71767b;
+            font-size: 0.82rem;
+            margin-bottom: 24px;
+        }
+
+        /* Progress bar */
+        .progress-box {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .progress-box.active { display: block; }
+        .progress-label {
+            font-size: 0.9rem;
+            color: #e7e9ea;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .progress-label .pct { color: #1d9bf0; font-weight: 700; }
+        .progress-track {
+            height: 8px;
+            background: #2e3a47;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #1d9bf0;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        .progress-sub {
+            font-size: 0.78rem;
+            color: #71767b;
+        }
+
+        /* Month Navigation */
+        .month-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .month-nav button {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            color: #e7e9ea;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .month-nav button:hover { border-color: #1d9bf0; }
+        .month-nav button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .month-nav .month-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            min-width: 160px;
+            text-align: center;
+        }
+        .fetch-btn {
+            background: #1d9bf0 !important;
+            border-color: #1d9bf0 !important;
+            color: #fff !important;
+        }
+        .fetch-btn:hover { background: #1a8cd8 !important; }
+        .month-status {
+            text-align: center;
+            font-size: 0.78rem;
+            color: #71767b;
+            margin-bottom: 16px;
+            min-height: 18px;
+        }
+        .month-status .fetched { color: #00b874; }
+        .month-status .not-fetched { color: #f7b731; }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 32px;
+        }
+        .calendar-grid .weekday-header {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #71767b;
+            padding: 8px 0;
+            font-weight: 600;
+        }
+        .calendar-cell {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 6px;
+            min-height: 90px;
+            padding: 6px 8px;
+            position: relative;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .calendar-cell.empty {
+            background: #12151a;
+            border-color: transparent;
+        }
+        .calendar-cell.has-earnings {
+            cursor: pointer;
+        }
+        .calendar-cell.has-earnings:hover {
+            border-color: #1d9bf0;
+            background: #1e2530;
+        }
+        .calendar-cell.today {
+            border-color: #f7b731;
+        }
+        .calendar-cell.selected {
+            border-color: #1d9bf0;
+            background: #1d9bf015;
+            box-shadow: 0 0 12px rgba(29, 155, 240, 0.15);
+        }
+        .calendar-cell .day-num {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #8899a6;
+            margin-bottom: 4px;
+        }
+        .calendar-cell.today .day-num {
+            color: #f7b731;
+        }
+        .calendar-cell.weekend {
+            opacity: 0.4;
+        }
+        .calendar-cell .cell-tickers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+        .calendar-cell .cell-ticker {
+            font-size: 0.68rem;
+            background: #1d9bf018;
+            color: #1d9bf0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .calendar-cell .cell-more {
+            font-size: 0.65rem;
+            color: #71767b;
+            margin-top: 2px;
+        }
+        .calendar-cell .cell-count {
+            position: absolute;
+            top: 5px;
+            right: 7px;
+            font-size: 0.65rem;
+            background: #1d9bf0;
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            background: #1a1f25;
+            border: 1px solid #2e3a47;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            display: none;
+        }
+        .detail-panel.active { display: block; }
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .detail-header h3 {
+            color: #1d9bf0;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        .detail-close {
+            background: none;
+            border: none;
+            color: #71767b;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .detail-close:hover { color: #e7e9ea; }
+
+        .detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .detail-item {
+            background: #12171d;
+            border: 1px solid #2e3a47;
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .detail-item .ticker {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #1d9bf0;
+            min-width: 65px;
+        }
+        .detail-item .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .detail-item .name {
+            font-size: 0.9rem;
+            color: #e7e9ea;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .detail-item .meta {
+            font-size: 0.8rem;
+            color: #71767b;
+            margin-top: 3px;
+        }
+        .detail-item .badges {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-pre {
+            background: #00b87422;
+            color: #00b874;
+            border: 1px solid #00b87444;
+        }
+        .badge-post {
+            background: #f4212e22;
+            color: #f4212e;
+            border: 1px solid #f4212e44;
+        }
+        .badge-tbd {
+            background: #71767b22;
+            color: #71767b;
+            border: 1px solid #71767b44;
+        }
+        .badge-sp500 {
+            background: #7c3aed22;
+            color: #a78bfa;
+            border: 1px solid #7c3aed44;
+        }
+        .badge-est {
+            background: #f7b73122;
+            color: #f7b731;
+            border: 1px solid #f7b73144;
+        }
+
+        /* Loading */
+        .loading-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: #71767b;
+            font-size: 1rem;
+        }
+        .loading-box .spinner {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid #2e3a47;
+            border-top-color: #1d9bf0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 返回主页</a>
+        <div class="header-row">
+            <h1>📅 财报日历</h1>
+        </div>
+        <div class="last-updated" id="lastUpdated"></div>
+
+        <div id="loading" class="loading-box">
+            <div class="spinner"></div>
+            <div>正在加载财报日历...</div>
+        </div>
+
+        <div id="content" style="display:none;">
+            <!-- 进度条（拉取时显示） -->
+            <div class="progress-box" id="progressBox">
+                <div class="progress-label">
+                    <span id="progressText">准备中...</span>
+                    <span class="pct" id="progressPct">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-sub" id="progressSub"></div>
+            </div>
+            <div class="month-nav">
+                <button onclick="prevMonth()">◀ 上月</button>
+                <span class="month-label" id="monthLabel"></span>
+                <button onclick="nextMonth()">下月 ▶</button>
+                <button class="fetch-btn" id="fetchMonthBtn" onclick="fetchCurrentMonth()">⬇ 拉取本月数据</button>
+            </div>
+            <div class="month-status" id="monthStatus"></div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="detail-panel" id="detailPanel">
+                <div class="detail-header">
+                    <h3 id="detailTitle"></h3>
+                    <button class="detail-close" onclick="closeDetail()">✕</button>
+                </div>
+                <div class="detail-list" id="detailList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="earnings.js"></script>
+</body>
+</html>

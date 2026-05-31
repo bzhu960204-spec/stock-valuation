@@ -7,14 +7,16 @@ Stock Valuation - Flask Backend
 
 import json
 import sqlite3
+from datetime import datetime
 from pathlib import Path
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response, stream_with_context
 
 from valuation_fetcher import fetch_multiple
 from cn_valuation_fetcher import fetch_multiple_cn
 from growth_fetcher import fetch_multiple_growth
 from lhb_fetcher import fetch_latest_lhb, fetch_range, get_history_dates, get_lhb_by_date
 from options_fetcher import fetch_options_chain, fetch_options_by_expiration
+from earnings_fetcher import get_calendar, build_calendar, build_calendar_for_month, stream_calendar_for_month
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
@@ -375,6 +377,11 @@ def options_page():
     return send_from_directory("static", "options.html")
 
 
+@app.route("/earnings")
+def earnings_page():
+    return send_from_directory("static", "earnings.html")
+
+
 @app.route("/api/options/chain", methods=["POST"])
 def options_chain():
     """获取指定股票最近行权日的期权链，并保存快照"""
@@ -465,6 +472,55 @@ def options_delete_history():
 
 
 _init_options_db()
+
+
+# ════════════════════════════════════════════════════════════════
+#  财报日历模块  /api/earnings/*
+# ════════════════════════════════════════════════════════════════
+
+@app.route("/api/earnings/calendar", methods=["GET"])
+def earnings_calendar():
+    """获取财报日历数据（返回所有已缓存月份）"""
+    data = get_calendar()
+    return jsonify(data)
+
+
+@app.route("/api/earnings/refresh", methods=["POST"])
+def earnings_refresh():
+    """拉取指定月份的财报数据。body: { year: 2026, month: 6 }"""
+    body = request.get_json(silent=True) or {}
+    today = datetime.now()
+    year = int(body.get("year", today.year))
+    month = int(body.get("month", today.month))
+    if not (2020 <= year <= 2035 and 1 <= month <= 12):
+        return jsonify({"error": "无效的年份或月份"}), 400
+    data = build_calendar_for_month(year, month)
+    return jsonify(data)
+
+
+@app.route("/api/earnings/refresh-stream")
+def earnings_refresh_stream():
+    """SSE 流式推送拉取进度。参数: ?year=2026&month=7"""
+    today = datetime.now()
+    try:
+        year = int(request.args.get("year", today.year))
+        month = int(request.args.get("month", today.month))
+    except ValueError:
+        return jsonify({"error": "无效参数"}), 400
+    if not (2020 <= year <= 2035 and 1 <= month <= 12):
+        return jsonify({"error": "无效的年份或月份"}), 400
+
+    def generate():
+        import json as _json
+        for event in stream_calendar_for_month(year, month):
+            yield f"data: {_json.dumps(event, ensure_ascii=False)}\n\n"
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    )
+
 
 if __name__ == "__main__":
     print("\n  Stock Tools 服务启动中...")
