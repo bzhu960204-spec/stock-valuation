@@ -427,7 +427,30 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: all 0.2s ease;
         }
+        .note-modal-content.maximized {
+            width: 100% !important;
+            max-width: 100% !important;
+            max-height: 100vh !important;
+            height: 100vh;
+            border-radius: 0;
+            border: none;
+        }
+        .note-modal.maximized {
+            align-items: stretch;
+            padding: 0;
+        }
+        .maximize-btn {
+            background: none;
+            border: none;
+            color: #71767b;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+        }
+        .maximize-btn:hover { color: #e7e9ea; }
         .note-modal-header {
             display: flex;
             align-items: center;
@@ -539,6 +562,11 @@
         .note-preview a { color: #1d9bf0; text-decoration: none; }
         .note-preview a:hover { text-decoration: underline; }
         .note-preview del { color: #71767b; }
+        .note-preview table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.9rem; }
+        .note-preview th, .note-preview td { border: 1px solid #2e3a47; padding: 6px 12px; text-align: left; }
+        .note-preview th { background: #1a1f25; color: #1d9bf0; font-weight: 600; }
+        .note-preview tr:nth-child(even) td { background: #1a1f25; }
+        .note-preview td { color: #e7e9ea; }
 
         /* Toast */
         .toast {
@@ -614,7 +642,10 @@
         <div class="note-modal-content">
             <div class="note-modal-header">
                 <h3 id="noteModalTitle">财报笔记</h3>
-                <button class="close-btn" onclick="closeNoteModal()">✕</button>
+                <div style="display:flex;align-items:center;gap:4px;">
+                    <button class="maximize-btn" id="noteMaximizeBtn" onclick="toggleNoteMaximize()" title="最大化">⛶</button>
+                    <button class="close-btn" onclick="closeNoteModal()">✕</button>
+                </div>
             </div>
             <div class="note-modal-toolbar">
                 <button id="noteToggleBtn" data-mode="edit" onclick="toggleNotePreview()">预览</button>

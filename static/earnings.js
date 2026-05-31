@@ -507,6 +507,16 @@ async function saveNote() {
     }
 }
 
+function toggleNoteMaximize() {
+    const modal = document.getElementById('noteModal');
+    const content = document.querySelector('.note-modal-content');
+    const btn = document.getElementById('noteMaximizeBtn');
+    const isMax = content.classList.toggle('maximized');
+    modal.classList.toggle('maximized', isMax);
+    btn.textContent = isMax ? '⬜' : '⛶';
+    btn.title = isMax ? '还原' : '最大化';
+}
+
 function showToast(msg, isError = false) {
     let toast = document.getElementById('toast');
     if (!toast) {
@@ -529,6 +539,22 @@ function renderMarkdown(text) {
     // 代码块 (```...```)
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
         return `<pre><code class="lang-${lang}">${escapeHtml(code.trim())}</code></pre>`;
+    });
+
+    // 表格 (需在换行处理前)
+    html = html.replace(/^(\|.+\|[ \t]*\n\|(?:[ \t]*:?-+:?[ \t]*\|)+[ \t]*\n(?:\|.+\|[ \t]*\n?)+)/gm, (match) => {
+        const lines = match.trim().split('\n');
+        const parseRow = line => line.split('|').slice(1, -1).map(c => c.trim());
+        const renderCell = c => c
+            .replace(/\*\*\*(.+?)\*\*\*/g, (_, x) => `<strong><em>${x}</em></strong>`)
+            .replace(/\*\*(.+?)\*\*/g, (_, x) => `<strong>${x}</strong>`)
+            .replace(/\*(.+?)\*/g, (_, x) => `<em>${x}</em>`);
+        const headers = parseRow(lines[0]);
+        const rows = lines.slice(2).map(parseRow);
+        let t = '<table><thead><tr>' + headers.map(h => `<th>${renderCell(h)}</th>`).join('') + '</tr></thead><tbody>';
+        rows.forEach(row => { t += '<tr>' + row.map(c => `<td>${renderCell(c)}</td>`).join('') + '</tr>'; });
+        t += '</tbody></table>';
+        return t;
     });
 
     // 行内代码
